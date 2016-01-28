@@ -8,6 +8,7 @@ package com.dempe.lamp.codec.pack;
  * To change this template use File | Settings | File Templates.
  */
 public interface Marshallable {
+
     public abstract void marshal(Pack pack);
 
     public abstract void unmarshal(Unpack unpack);

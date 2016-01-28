@@ -1,7 +1,7 @@
 package com.dempe.lamp.core;
 
-import com.dempe.lamp.proto.LampRequest;
-import com.dempe.lamp.proto.LampResponse;
+import com.dempe.lamp.proto.json.JSONRequest;
+import com.dempe.lamp.proto.json.JSONResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
@@ -22,11 +22,11 @@ public class TaskWorker implements Runnable {
 
     private ChannelHandlerContext ctx;
     private ServerContext context;
-    private LampRequest request;
+    private JSONRequest request;
 
 //    private static MetricThread metricThread = new MetricThread("write");
 
-    public TaskWorker(ChannelHandlerContext ctx, ServerContext context, LampRequest request) {
+    public TaskWorker(ChannelHandlerContext ctx, ServerContext context, JSONRequest request) {
         this.ctx = ctx;
         this.context = context;
         this.request = request;
@@ -37,7 +37,7 @@ public class TaskWorker implements Runnable {
         try {
             context.doFilter(request, ctx);
             ActionTack tack = new ActionTack(context);
-            LampResponse act = tack.act(request);
+            JSONResponse act = tack.act(request);
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
 //                LOGGER.info("act:{}", act.toString());

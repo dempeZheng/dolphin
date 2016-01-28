@@ -1,9 +1,9 @@
-package com.dempe.lamp.proto;
+package com.dempe.lamp.proto.json;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dempe.lamp.codec.pack.Pack;
 import com.dempe.lamp.codec.pack.Unpack;
+import com.dempe.lamp.proto.Request;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -13,15 +13,15 @@ import org.apache.commons.lang3.StringUtils;
  * Time: 14:55
  * To change this template use File | Settings | File Templates.
  */
-public class LampRequest implements Request {
+public class JSONRequest implements Request {
 
     private String uri;
     private JSONObject data;
 
-    public LampRequest() {
+    public JSONRequest() {
     }
 
-    public LampRequest(String uri, JSONObject paramJSON) {
+    public JSONRequest(String uri, JSONObject paramJSON) {
         this.uri = uri;
         this.data = paramJSON;
     }
@@ -29,8 +29,8 @@ public class LampRequest implements Request {
     @Override
     public void marshal(Pack pack) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("uri",uri);
-        jsonObject.put("data",data);
+        jsonObject.put("uri", uri);
+        jsonObject.put("data", data);
         pack.putVarstr(jsonObject.toJSONString());
     }
 

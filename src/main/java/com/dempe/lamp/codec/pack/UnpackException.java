@@ -8,6 +8,7 @@ package com.dempe.lamp.codec.pack;
  * To change this template use File | Settings | File Templates.
  */
 public class UnpackException extends RuntimeException {
+
     public static final long serialVersionUID = 12L;
 
     public UnpackException() {

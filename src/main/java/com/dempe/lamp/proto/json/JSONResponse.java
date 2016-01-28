@@ -1,8 +1,9 @@
-package com.dempe.lamp.proto;
+package com.dempe.lamp.proto.json;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dempe.lamp.codec.pack.Pack;
 import com.dempe.lamp.codec.pack.Unpack;
+import com.dempe.lamp.proto.Response;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -12,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
  * Time: 14:55
  * To change this template use File | Settings | File Templates.
  */
-public class LampResponse extends JSONObject implements Response {
+public class JSONResponse extends JSONObject implements Response {
 
-    public LampResponse() {
+    public JSONResponse() {
     }
 
     public String getUri() {

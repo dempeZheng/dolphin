@@ -1,6 +1,6 @@
 package com.dempe.lamp.core;
 
-import com.dempe.lamp.proto.LampRequest;
+import com.dempe.lamp.proto.json.JSONRequest;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -35,8 +35,8 @@ public class DispatcherHandler extends ChannelHandlerAdapter {
         //  ent protocol
 //        LOGGER.info("dispatch msg:{}", msg);
 //        metricThread.increment();
-        if (msg instanceof LampRequest) {
-            workerThreadService.submit(new TaskWorker(ctx, context, (LampRequest) msg));
+        if (msg instanceof JSONRequest) {
+            workerThreadService.submit(new TaskWorker(ctx, context, (JSONRequest) msg));
         }
 
 

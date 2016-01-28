@@ -13,6 +13,7 @@ import java.nio.ByteOrder;
  * To change this template use File | Settings | File Templates.
  */
 public class Unpack {
+
     protected ByteBuffer buffer;
 
     protected Object attachment;
