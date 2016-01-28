@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class JSONRequest implements Request {
 
+    private int id;
     private String uri;
     private JSONObject data;
 
@@ -31,6 +32,7 @@ public class JSONRequest implements Request {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("uri", uri);
         jsonObject.put("data", data);
+        jsonObject.put("id",id);
         pack.putVarstr(jsonObject.toJSONString());
     }
 
@@ -42,9 +44,20 @@ public class JSONRequest implements Request {
             if (jsonObject != null) {
                 this.uri = jsonObject.getString("uri");
                 this.data = jsonObject.getJSONObject("data");
+                this.id = jsonObject.getInteger("id");
             }
 
         }
+    }
+
+    @Override
+    public int id() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

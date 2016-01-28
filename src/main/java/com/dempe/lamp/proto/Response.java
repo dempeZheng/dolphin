@@ -9,9 +9,9 @@ import com.dempe.lamp.codec.pack.Marshallable;
  * Time: 17:41
  * To change this template use File | Settings | File Templates.
  */
-public interface Response extends Marshallable{
+public interface Response extends Marshallable {
 
-
+    int id();
 
 
 }

@@ -11,6 +11,11 @@ import com.dempe.lamp.codec.pack.Marshallable;
  * To change this template use File | Settings | File Templates.
  */
 public interface Request extends Marshallable {
+
+    int id();
+
+    void setId(int id);
+
     /**
      * 获取路由uri
      *

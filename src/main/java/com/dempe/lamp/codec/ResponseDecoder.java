@@ -3,6 +3,7 @@ package com.dempe.lamp.codec;
 import com.dempe.lamp.codec.pack.ProtocolValue;
 import com.dempe.lamp.codec.pack.Unpack;
 import com.dempe.lamp.proto.json.JSONRequest;
+import com.dempe.lamp.proto.json.JSONResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -45,7 +46,7 @@ public class ResponseDecoder extends ByteToMessageDecoder {
         byte protoType = (byte) protoValue[0];
 
         if (protoType == 0) {
-            JSONRequest proto = new JSONRequest();
+            JSONResponse proto = new JSONResponse();
             proto.unmarshal(unpack);
             list.add(proto);
         }

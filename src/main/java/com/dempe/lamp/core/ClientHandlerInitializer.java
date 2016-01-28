@@ -20,6 +20,7 @@ public class ClientHandlerInitializer extends ChannelInitializer<SocketChannel> 
     public void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("RequestEncoder", new RequestEncoder())
-                .addLast("ResponseDecoder", new ResponseDecoder());
+                .addLast("ResponseDecoder", new ResponseDecoder())
+                .addLast("ClientHandler", new ClientHandler());
     }
 }

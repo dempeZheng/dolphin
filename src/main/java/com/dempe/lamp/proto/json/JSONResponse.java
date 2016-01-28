@@ -13,33 +13,28 @@ import org.apache.commons.lang3.StringUtils;
  * Time: 14:55
  * To change this template use File | Settings | File Templates.
  */
-public class JSONResponse extends JSONObject implements Response {
+public class JSONResponse implements Response {
+
+    private int id;
+
+    private String uri;
+    private JSONObject data;
 
     public JSONResponse() {
     }
 
-    public String getUri() {
-        return getString("uri");
+    public JSONResponse(String uri, JSONObject paramJSON) {
+        this.uri = uri;
+        this.data = paramJSON;
     }
-
-    public void setUri(String uri) {
-        put("uri", uri);
-    }
-
-
-    public JSONObject getData() {
-        return getJSONObject("data");
-    }
-
-    public void setData(JSONObject data) {
-        put("data", data);
-    }
-
 
     @Override
     public void marshal(Pack pack) {
-        String str = toJSONString();
-        pack.putVarstr(str);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uri", uri);
+        jsonObject.put("data", data);
+        jsonObject.put("id",id);
+        pack.putVarstr(jsonObject.toJSONString());
     }
 
     @Override
@@ -48,10 +43,38 @@ public class JSONResponse extends JSONObject implements Response {
         if (StringUtils.isNotBlank(jsonStr)) {
             JSONObject jsonObject = JSONObject.parseObject(jsonStr);
             if (jsonObject != null) {
-                setUri(jsonObject.getString("uri"));
-                setData(jsonObject.getJSONObject("data"));
+                this.uri = jsonObject.getString("uri");
+                this.data = jsonObject.getJSONObject("data");
+                this.id = jsonObject.getInteger("id");
             }
 
         }
+    }
+
+    @Override
+    public int id() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public JSONObject getData() {
+        return data;
+    }
+
+    public void setData(JSONObject data) {
+        this.data = data;
+    }
+
+
+    @Override
+    public String toString() {
+        return "JSONResponse{" +
+                "id=" + id +
+                ", uri='" + uri + '\'' +
+                ", data=" + data +
+                '}';
     }
 }

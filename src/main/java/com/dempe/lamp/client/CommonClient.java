@@ -2,7 +2,7 @@ package com.dempe.lamp.client;
 
 
 import com.dempe.lamp.core.ClientHandlerInitializer;
-import com.dempe.lamp.proto.json.JSONRequest;
+import com.dempe.lamp.proto.Request;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -105,7 +105,7 @@ public class CommonClient implements Client {
         }
     }
 
-    public void sendOnly(JSONRequest request) {
+    public void send(Request request) {
         f.channel().writeAndFlush(request);
     }
 

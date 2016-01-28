@@ -37,5 +37,12 @@ public interface AppConfig extends Config {
 
     // ***********************application configuration*****************
 
+    @Key("env")
+    @DefaultValue("uat")
+    String env();
+
+    @Key("servers.${env}.appId")
+    @DefaultValue("25112")
+    int appId();
 
 }

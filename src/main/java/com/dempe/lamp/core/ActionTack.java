@@ -2,9 +2,9 @@ package com.dempe.lamp.core;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.dempe.lamp.proto.json.JSONResponse;
 import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.Response;
+import com.dempe.lamp.proto.json.JSONResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +51,12 @@ public class ActionTack implements ActionTake<Request, Response> {
             LOGGER.debug("actionMethod:{} return void.", actionMethod);
             return null;
         }
-        JSONResponse resp = null;
-
+        JSONResponse resp = new JSONResponse();
+        resp.setId(request.id());
+        if (result instanceof JSONObject) {
+            resp.setData((JSONObject) result);
+        }
+        System.out.println(resp.id());
         return resp;
     }
 

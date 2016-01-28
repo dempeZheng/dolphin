@@ -1,5 +1,6 @@
 package com.dempe.lamp.sample;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dempe.lamp.Param;
 import com.dempe.lamp.Path;
 import org.springframework.stereotype.Controller;
@@ -20,9 +21,12 @@ public class LampController {
     LampService lampService;
 
     @Path
-    public void test(@Param String name) {
+    public JSONObject test(@Param String name) {
         System.out.println("name===>" + name);
         lampService.say();
         System.out.println("-------------------");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 6666);
+        return jsonObject;
     }
 }
