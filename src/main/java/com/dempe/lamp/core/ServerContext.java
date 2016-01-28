@@ -2,7 +2,7 @@ package com.dempe.lamp.core;
 
 
 import com.dempe.lamp.AppConfig;
-import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.LampRequest;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.ApplicationContext;
 
@@ -20,13 +20,14 @@ public class ServerContext {
     public AppConfig config;
 
     private ApplicationContext context;
-    public ServerContext(AppConfig config,ApplicationContext context) {
+
+    public ServerContext(AppConfig config, ApplicationContext context) {
         this.config = config;
         this.context = context;
-        this.mapping = new RequestMapping(config,context);
+        this.mapping = new RequestMapping(config, context);
     }
 
-    public static Request getYYProto() {
+    public static LampRequest getYYProto() {
         return getContext().getYYProto();
     }
 
@@ -39,7 +40,7 @@ public class ServerContext {
         return context;
     }
 
-    public void doFilter(Request proto, ChannelHandlerContext ctx) {
+    public void doFilter(LampRequest proto, ChannelHandlerContext ctx) {
         localContext.set(new Context(proto, ctx));
     }
 
@@ -53,16 +54,16 @@ public class ServerContext {
 
     static class Context {
 
-        final Request yyProto;
+        final LampRequest yyProto;
 
         final ChannelHandlerContext response;
 
-        Context(Request yyProto, ChannelHandlerContext response) {
+        Context(LampRequest yyProto, ChannelHandlerContext response) {
             this.yyProto = yyProto;
             this.response = response;
         }
 
-        Request getYYProto() {
+        LampRequest getYYProto() {
             return yyProto;
         }
 

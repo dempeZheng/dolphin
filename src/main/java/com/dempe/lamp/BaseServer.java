@@ -16,9 +16,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,27 +28,19 @@ import org.springframework.context.annotation.Configuration;
 public class BaseServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseServer.class);
-
+    ApplicationContext context;
     private EventLoopGroup bossGroup;
-
     private EventLoopGroup workerGroup;
-
     private ServerBootstrap b;
-
     private DefaultEventExecutorGroup executorGroup;
-
-
     private AppConfig config;
-
     private ServerContext Servercontext;
 
-    ApplicationContext context;
 
-
-    public BaseServer(AppConfig config,ApplicationContext context) {
+    public BaseServer(AppConfig config, ApplicationContext context) {
         this.config = config;
         this.context = context;
-        Servercontext = new ServerContext(config,context);
+        Servercontext = new ServerContext(config, context);
         init();
     }
 

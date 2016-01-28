@@ -1,6 +1,6 @@
 package com.dempe.lamp.core;
 
-import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.LampRequest;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -23,7 +23,7 @@ public class DispatcherHandler extends ChannelHandlerAdapter {
     private final static ExecutorService workerThreadService = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors(), new DefaultThreadFactory("workerThread"));
 
-//    private static MetricThread metricThread =new MetricThread("lamp");
+    //    private static MetricThread metricThread =new MetricThread("lamp");
     private ServerContext context;
 
     public DispatcherHandler(ServerContext context) {
@@ -35,8 +35,8 @@ public class DispatcherHandler extends ChannelHandlerAdapter {
         //  ent protocol
 //        LOGGER.info("dispatch msg:{}", msg);
 //        metricThread.increment();
-        if (msg instanceof Request) {
-            workerThreadService.submit(new TaskWorker(ctx, context, (Request) msg));
+        if (msg instanceof LampRequest) {
+            workerThreadService.submit(new TaskWorker(ctx, context, (LampRequest) msg));
         }
 
 

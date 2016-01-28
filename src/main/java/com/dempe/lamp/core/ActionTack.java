@@ -2,6 +2,7 @@ package com.dempe.lamp.core;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.dempe.lamp.proto.LampResponse;
 import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +30,8 @@ public class ActionTack implements ActionTake<Request, Response> {
     }
 
 
-    public Response act(Request request) throws InvocationTargetException, IllegalAccessException {
-        String uri = request.getUri();
+    public LampResponse act(Request request) throws InvocationTargetException, IllegalAccessException {
+        String uri = request.uri();
         if (StringUtils.isBlank(uri)) {
             LOGGER.warn("[dispatcher]:jsonURI is blank");
             return null;
@@ -42,7 +43,7 @@ public class ActionTack implements ActionTake<Request, Response> {
         }
         Method method = actionMethod.getMethod();
         String[] parameterNames = MethodParam.getParameterNames(method);
-        JSONObject params = request.getData();
+        JSONObject params = request.getParamJSON();
         Object[] parameterValues = MethodParam.getParameterValues(parameterNames, method, params);
         Object result = MethodInvoker.interceptorInvoker(actionMethod, parameterValues);
         if (result == null) {
@@ -50,7 +51,7 @@ public class ActionTack implements ActionTake<Request, Response> {
             LOGGER.debug("actionMethod:{} return void.", actionMethod);
             return null;
         }
-        Response resp = null;
+        LampResponse resp = null;
 
         return resp;
     }

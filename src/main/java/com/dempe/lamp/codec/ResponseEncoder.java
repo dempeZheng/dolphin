@@ -2,6 +2,7 @@ package com.dempe.lamp.codec;
 
 import com.dempe.lamp.codec.pack.Pack;
 import com.dempe.lamp.codec.pack.ProtocolValue;
+import com.dempe.lamp.proto.LampResponse;
 import com.dempe.lamp.proto.Response;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

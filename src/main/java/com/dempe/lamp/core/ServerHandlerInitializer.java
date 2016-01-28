@@ -2,7 +2,6 @@ package com.dempe.lamp.core;
 
 
 import com.dempe.lamp.codec.RequestDecoder;
-import com.dempe.lamp.codec.RequestEncoder;
 import com.dempe.lamp.codec.ResponseEncoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

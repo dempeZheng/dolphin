@@ -1,6 +1,6 @@
 package com.dempe.lamp.client;
 
-import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.LampRequest;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  */
 public interface Client {
 
-    public void sendOnly(Request request);
+    public void sendOnly(LampRequest request);
 
     public boolean reconnect() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 

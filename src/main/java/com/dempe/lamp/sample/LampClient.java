@@ -2,7 +2,7 @@ package com.dempe.lamp.sample;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dempe.lamp.client.CommonClient;
-import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.LampRequest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,11 +14,9 @@ import com.dempe.lamp.proto.Request;
 public class LampClient {
     public static void main(String[] args) {
         CommonClient client = new CommonClient("localhost", 8888);
-        Request request = new Request();
-        request.setUri("/lamp/test");
         JSONObject data = new JSONObject();
         data.put("name", "dempe");
-        request.setData(data);
+        LampRequest request = new LampRequest("/lamp/test", data);
         client.sendOnly(request);
     }
 }

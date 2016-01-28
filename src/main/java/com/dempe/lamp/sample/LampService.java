@@ -1,7 +1,6 @@
 package com.dempe.lamp.sample;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /**
  * Created with IntelliJ IDEA.

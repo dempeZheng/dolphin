@@ -1,7 +1,6 @@
 package com.dempe.lamp.core;
 
 
-import com.dempe.lamp.codec.RequestDecoder;
 import com.dempe.lamp.codec.RequestEncoder;
 import com.dempe.lamp.codec.ResponseDecoder;
 import io.netty.channel.ChannelInitializer;
@@ -16,7 +15,6 @@ import io.netty.channel.socket.SocketChannel;
  * To change this template use File | Settings | File Templates.
  */
 public class ClientHandlerInitializer extends ChannelInitializer<SocketChannel> {
-
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
