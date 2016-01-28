@@ -36,7 +36,7 @@ public class TaskWorker implements Runnable {
     public void run() {
         try {
             context.doFilter(request, ctx);
-            ActionTack tack = new ActionTack(context);
+            ActionTake tack = new ActionTake(context);
             JSONResponse act = tack.act(request);
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
