@@ -8,12 +8,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config/>
-
     <!-- 主动搜索以下目录 -->
     <context:component-scan base-package="com.dempe.lamp"/>
-
-    <!--<bean id="lampService" class="com.dempe.lamp.sample.LampService">-->
-    <!--</bean>-->
-
 
 </beans>
