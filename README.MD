@@ -2,7 +2,7 @@
 >基于netty&spring容器封装的json通讯协议组件
 
 ##modules
-![Alt text](./1454037931352.png)
+![Alt text](https://github.com/dempeZheng/lamp/blob/master/doc/lamp-modules.png)
 
 ##example
 
