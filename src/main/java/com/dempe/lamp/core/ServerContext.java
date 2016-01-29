@@ -2,6 +2,7 @@ package com.dempe.lamp.core;
 
 
 import com.dempe.lamp.AppConfig;
+import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.json.JSONRequest;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +28,7 @@ public class ServerContext {
         this.mapping = new RequestMapping(config, context);
     }
 
-    public static JSONRequest getYYProto() {
+    public static Request getYYProto() {
         return getContext().getYYProto();
     }
 
@@ -40,7 +41,7 @@ public class ServerContext {
         return context;
     }
 
-    public void doFilter(JSONRequest proto, ChannelHandlerContext ctx) {
+    public void doFilter(Request proto, ChannelHandlerContext ctx) {
         localContext.set(new Context(proto, ctx));
     }
 
@@ -54,16 +55,16 @@ public class ServerContext {
 
     static class Context {
 
-        final JSONRequest yyProto;
+        final Request yyProto;
 
         final ChannelHandlerContext response;
 
-        Context(JSONRequest yyProto, ChannelHandlerContext response) {
+        Context(Request yyProto, ChannelHandlerContext response) {
             this.yyProto = yyProto;
             this.response = response;
         }
 
-        JSONRequest getYYProto() {
+        Request getYYProto() {
             return yyProto;
         }
 

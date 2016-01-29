@@ -1,5 +1,7 @@
 package com.dempe.lamp.core;
 
+import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.Response;
 import com.dempe.lamp.proto.json.JSONRequest;
 import com.dempe.lamp.proto.json.JSONResponse;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,11 +24,11 @@ public class TaskWorker implements Runnable {
 
     private ChannelHandlerContext ctx;
     private ServerContext context;
-    private JSONRequest request;
+    private Request request;
 
 //    private static MetricThread metricThread = new MetricThread("write");
 
-    public TaskWorker(ChannelHandlerContext ctx, ServerContext context, JSONRequest request) {
+    public TaskWorker(ChannelHandlerContext ctx, ServerContext context, Request request) {
         this.ctx = ctx;
         this.context = context;
         this.request = request;
@@ -37,7 +39,7 @@ public class TaskWorker implements Runnable {
         try {
             context.doFilter(request, ctx);
             ActionTake tack = new ActionTake(context);
-            JSONResponse act = tack.act(request);
+            Response act = tack.act(request);
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
 //                LOGGER.info("act:{}", act.toString());
