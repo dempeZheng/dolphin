@@ -58,9 +58,9 @@
     </appender>
 
     <root level="INFO">
-        <!--<appender-ref ref="alllog" />-->
-        <!--<appender-ref ref="errorlog" />-->
-        <!--<appender-ref ref="warnlog" />-->
+        <appender-ref ref="alllog" />
+        <appender-ref ref="errorlog" />
+        <appender-ref ref="warnlog" />
         <appender-ref ref="stdout"/>
     </root>
 </configuration>

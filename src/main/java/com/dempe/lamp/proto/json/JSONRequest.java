@@ -69,4 +69,13 @@ public class JSONRequest implements Request {
     public JSONObject getParamJSON() {
         return data;
     }
+
+    @Override
+    public String toString() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uri", uri);
+        jsonObject.put("data", data);
+        jsonObject.put("id",id);
+        return jsonObject.toString();
+    }
 }

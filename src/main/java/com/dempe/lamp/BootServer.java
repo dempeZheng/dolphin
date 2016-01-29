@@ -25,9 +25,9 @@ import org.springframework.context.ApplicationContext;
  * To change this template use File | Settings | File Templates.
  */
 
-public class BaseServer implements Server {
+public class BootServer implements Server {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BootServer.class);
     ApplicationContext context;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -37,7 +37,7 @@ public class BaseServer implements Server {
     private ServerContext Servercontext;
 
 
-    public BaseServer(AppConfig config, ApplicationContext context) {
+    public BootServer(AppConfig config, ApplicationContext context) {
         this.config = config;
         this.context = context;
         Servercontext = new ServerContext(config, context);
@@ -84,7 +84,7 @@ public class BaseServer implements Server {
             workerGroup.shutdownGracefully();
     }
 
-    public BaseServer stopWithJVMShutdown() {
+    public BootServer stopWithJVMShutdown() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {

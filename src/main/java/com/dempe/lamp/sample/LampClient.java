@@ -1,9 +1,8 @@
 package com.dempe.lamp.sample;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dempe.lamp.client.CommonClient;
 import com.dempe.lamp.client.ReplyClient;
-import com.dempe.lamp.proto.Response;
 import com.dempe.lamp.proto.json.JSONRequest;
 
 /**
@@ -15,12 +14,14 @@ import com.dempe.lamp.proto.json.JSONRequest;
  */
 public class LampClient {
     public static void main(String[] args) {
-        ReplyClient client = new ReplyClient("localhost", 8888);
+//        ReplyClient client = new ReplyClient("localhost", 8888);
         JSONObject data = new JSONObject();
         data.put("name", "dempe");
         JSONRequest request = new JSONRequest("/lamp/test", data);
-        Response response = client.sendAndWait(request);
-        client.sendOnly(request);
-        System.out.println(response);
+        System.out.println(request);
+        System.out.println(JSON.toJSONString(request));
+//        Response response = client.sendAndWait(request);
+//        client.sendOnly(request);
+//        System.out.println(response);
     }
 }

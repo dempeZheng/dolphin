@@ -7,7 +7,7 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;import java.lang.Exception;import java.lang.Integer;import java.lang.Object;import java.lang.Override;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,8 +20,7 @@ public class ClientHandler extends ChannelHandlerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientHandler.class);
 
-    private ReplyWaitQueue replyQueue = new ReplyWaitQueue();
-
+    private final static ReplyWaitQueue replyQueue = new ReplyWaitQueue();
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

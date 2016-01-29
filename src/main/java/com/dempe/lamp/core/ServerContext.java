@@ -28,8 +28,8 @@ public class ServerContext {
         this.mapping = new RequestMapping(config, context);
     }
 
-    public static Request getYYProto() {
-        return getContext().getYYProto();
+    public static Request getRequest() {
+        return getContext().getRequest();
     }
 
     static Context getContext() {
@@ -41,8 +41,8 @@ public class ServerContext {
         return context;
     }
 
-    public void doFilter(Request proto, ChannelHandlerContext ctx) {
-        localContext.set(new Context(proto, ctx));
+    public void doFilter(Request request, ChannelHandlerContext ctx) {
+        localContext.set(new Context(request, ctx));
     }
 
     public void removeLocalContext() {
@@ -55,17 +55,17 @@ public class ServerContext {
 
     static class Context {
 
-        final Request yyProto;
+        final Request request;
 
         final ChannelHandlerContext response;
 
-        Context(Request yyProto, ChannelHandlerContext response) {
-            this.yyProto = yyProto;
+        Context(Request request, ChannelHandlerContext response) {
+            this.request = request;
             this.response = response;
         }
 
-        Request getYYProto() {
-            return yyProto;
+        Request getRequest() {
+            return request;
         }
 
         ChannelHandlerContext getResponse() {

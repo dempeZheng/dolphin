@@ -5,9 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created with IntelliJ IDEA.
- * User: lamfire
- * Date: 14-2-17
- * Time: 下午6:04
+ * User: Dempe
+ * Date: 2015/10/21
+ * Time: 17:22
  * To change this template use File | Settings | File Templates.
  */
 public class ReplyWaitQueue {

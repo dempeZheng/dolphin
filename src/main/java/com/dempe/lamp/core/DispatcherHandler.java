@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 public class DispatcherHandler extends ChannelHandlerAdapter {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DispatcherHandler.class);
+
     private final static ExecutorService workerThreadService = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors(), new DefaultThreadFactory("workerThread"));
 
