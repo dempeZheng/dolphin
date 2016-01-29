@@ -6,6 +6,8 @@
 ##protocol
 >现仅支持私有JSONP协议
 >TODO 自定义协议扩展，开放解包封包实现
+
+
 ###JSONP实现
 RequestJSON
 ``` json
