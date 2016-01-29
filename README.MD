@@ -3,9 +3,41 @@
 
 ##modules
 ![Alt text](./doc/lamp-modules.png)
+##protocol
+>现仅支持私有JSONP协议
+>TODO 自定义协议扩展，开放解包封包实现
+###JSONP实现
+RequestJSON
+``` json
+{
+	"id": 0,
+	"uri": "/lamp/test",
+	"data": {
+		"name": "dempe"
+	}
+}
+```
+- id： 消息序列号，用户标志消息
+- uri：消息uri,用户路由到对应业务
+- data: 请求参数json
+
+ResponseJSON
+``` json
+{
+	"id": 0,
+	"uri": "/lamp/test",
+	"data": {
+		"data": "6666"
+	}
+
+}
+```
+- id： 消息序列号，用户标志消息
+- uri：消息uri,对应请求uri
+- data: 返回结果
+
 
 ##example
-
 ###服务端的打开方式
 ####基于spring注解的打开方式
 ``` java
@@ -76,4 +108,3 @@ public class LampClient {
     }
 }
 
-```
