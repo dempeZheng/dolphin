@@ -3,12 +3,11 @@ package com.dempe.lamp.core;
 
 import com.dempe.lamp.AppConfig;
 import com.dempe.lamp.proto.Request;
-import com.dempe.lamp.proto.json.JSONRequest;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Created with IntelliJ IDEA.
+ * 进程执行上下文环境
  * User: zhengdaxia
  * Date: 15/10/17
  * Time: 上午10:45
@@ -28,6 +27,11 @@ public class ServerContext {
         this.mapping = new RequestMapping(config, context);
     }
 
+    /**
+     * 获取业务执行的Request所有信息
+     *
+     * @return
+     */
     public static Request getRequest() {
         return getContext().getRequest();
     }
@@ -41,7 +45,14 @@ public class ServerContext {
         return context;
     }
 
-    public void doFilter(Request request, ChannelHandlerContext ctx) {
+    /**
+     * 将上下文环境暴露给业务使用方
+     * 将方法执行的上线文放入ThreadLocal中，便于业务逻辑中需要时获取对应的执行环境
+     *
+     * @param request 请求消息
+     * @param ctx     netty执行上下文环境
+     */
+    public void setLocalContext(Request request, ChannelHandlerContext ctx) {
         localContext.set(new Context(request, ctx));
     }
 

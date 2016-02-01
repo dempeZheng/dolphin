@@ -23,6 +23,7 @@ public class MethodParam {
     private final static Map<Method, String[]> paramCacheMap = new ConcurrentHashMap<Method, String[]>();
 
     public static String[] getParameterNames(Method method) {
+        // 方法参数名称缓存中获取
         String[] parameterNames = paramCacheMap.get(method);
         if (parameterNames == null) {
             parameterNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);

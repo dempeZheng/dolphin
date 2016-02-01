@@ -2,7 +2,6 @@ package com.dempe.lamp.codec;
 
 import com.dempe.lamp.codec.pack.ProtocolValue;
 import com.dempe.lamp.codec.pack.Unpack;
-import com.dempe.lamp.proto.json.JSONRequest;
 import com.dempe.lamp.proto.json.JSONResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,7 +11,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
+ * Response消息解码类
  * User: Dempe
  * Date: 2015/12/10
  * Time: 17:34

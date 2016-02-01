@@ -27,7 +27,7 @@ public class ServerHandlerInitializer extends ChannelInitializer<SocketChannel> 
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("RequestDecoder", new RequestDecoder())
                 .addLast("ResponseEncoder", new ResponseEncoder())
-                .addLast("dispatcher", new DispatcherHandler(context))
+                .addLast("dispatcher", new ProcessorHandler(context))
         ;
     }
 }

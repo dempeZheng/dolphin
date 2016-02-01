@@ -3,7 +3,8 @@ package com.dempe.lamp.core;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created with IntelliJ IDEA.
+ * 业务执行快照
+ * 通过一个request获取一个response
  * User: zhengdaxia
  * Date: 15/10/17
  * Time: 上午10:21

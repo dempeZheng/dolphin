@@ -1,5 +1,6 @@
 package com.dempe.lamp.sample;
 
+import com.dempe.lamp.AppConfig;
 import com.dempe.lamp.BootServer;
 import com.dempe.lamp.Server;
 import com.dempe.lamp.utils.DefConfigFactory;
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Created with IntelliJ IDEA.
+ * 基于spring注解的sampleServer
  * User: Dempe
  * Date: 2016/1/28
  * Time: 15:41
@@ -17,11 +18,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan
-public class LampServer {
+public class SampleServer {
 
     public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(LampServer.class);
-        Server server = new BootServer(DefConfigFactory.createDEVConfig(), context);
+        // 启动spring容器
+        ApplicationContext context = new AnnotationConfigApplicationContext(SampleServer.class);
+        // 生成开发环境的配置
+        AppConfig devConfig = DefConfigFactory.createDEVConfig();
+        Server server = new BootServer(devConfig, context);
         server.start();
     }
 }

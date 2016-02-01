@@ -3,7 +3,7 @@ package com.dempe.lamp;
 import org.aeonbits.owner.Config;
 
 /**
- * Created with IntelliJ IDEA.
+ * 基于owner实现的配置文件类，功能强大
  * User: Dempe
  * Date: 2015/12/11
  * Time: 17:51
@@ -13,9 +13,6 @@ import org.aeonbits.owner.Config;
 public interface AppConfig extends Config {
 
     // *********************system configuration*********************
-    @Key("host")
-    @DefaultValue("localhost")
-    String host();
 
     @Key("port")
     @DefaultValue("8888")
@@ -37,12 +34,17 @@ public interface AppConfig extends Config {
 
     // ***********************application configuration*****************
 
+    /**
+     * 可以通过env参数实现不同开发环境的隔离
+     *
+     * @return
+     */
     @Key("env")
     @DefaultValue("uat")
     String env();
 
     @Key("servers.${env}.appId")
-    @DefaultValue("25112")
+    @DefaultValue("30001")
     int appId();
 
 }

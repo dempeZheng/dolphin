@@ -4,7 +4,7 @@ package com.dempe.lamp.core;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created with IntelliJ IDEA.
+ * 方法执行类
  * User: Dempe
  * Date: 2015/11/4
  * Time: 10:06

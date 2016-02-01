@@ -1,13 +1,14 @@
 package com.dempe.lamp;
 
 /**
- * Created with IntelliJ IDEA.
+ * 开发环境枚举类[开发，测试，线上]
  * User: Dempe
  * Date: 2016/1/14
  * Time: 12:50
  * To change this template use File | Settings | File Templates.
  */
 public enum EnvEnum {
+
     DEV("dev"), UAT("uat"), PROD("prod"),;
 
     private String env;

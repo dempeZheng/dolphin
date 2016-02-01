@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Created with IntelliJ IDEA.
+ * 业务处理快照类
  * User: Dempe
  * Date: 2015/11/4
  * Time: 10:17
@@ -30,20 +30,31 @@ public class ActionTake implements Take<Request, Response> {
     }
 
 
+    /**
+     * 一个request获取一个response
+     *
+     * @param request 请求消息
+     * @return Response 返回消息
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
     public Response act(Request request) throws InvocationTargetException, IllegalAccessException {
         String uri = request.uri();
         if (StringUtils.isBlank(uri)) {
             LOGGER.warn("[dispatcher]:jsonURI is blank");
             return null;
         }
+        // 通过Request uri找到对应的ActionMethod
         ActionMethod actionMethod = context.tackAction(uri);
         if (actionMethod == null) {
             LOGGER.warn("[dispatcher]:not find jsonURI {}", uri);
             return null;
         }
         Method method = actionMethod.getMethod();
+        // 获取方法参数
         String[] parameterNames = MethodParam.getParameterNames(method);
         JSONObject params = request.getParamJSON();
+        // 获取方法执行参数值
         Object[] parameterValues = MethodParam.getParameterValues(parameterNames, method, params);
         Object result = MethodInvoker.interceptorInvoker(actionMethod, parameterValues);
         if (result == null) {
@@ -52,11 +63,11 @@ public class ActionTake implements Take<Request, Response> {
             return null;
         }
         JSONResponse resp = new JSONResponse();
+        // set请求消息id标识，用于client将Response&Request对应
         resp.setId(request.id());
         if (result instanceof JSONObject) {
             resp.setData((JSONObject) result);
         }
-        System.out.println(resp.id());
         return resp;
     }
 

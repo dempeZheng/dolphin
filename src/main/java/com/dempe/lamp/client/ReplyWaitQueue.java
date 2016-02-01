@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class ReplyWaitQueue {
+
     private static Map<Long, ReplyFuture> waits = new ConcurrentHashMap<Long, ReplyFuture>();
 
     public void add(ReplyFuture future) {

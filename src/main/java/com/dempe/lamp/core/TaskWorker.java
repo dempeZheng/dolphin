@@ -2,8 +2,6 @@ package com.dempe.lamp.core;
 
 import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.Response;
-import com.dempe.lamp.proto.json.JSONRequest;
-import com.dempe.lamp.proto.json.JSONResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
@@ -12,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created with IntelliJ IDEA.
+ * 业务处理线程类
  * User: Dempe
  * Date: 2015/12/11
  * Time: 10:01
@@ -37,7 +35,8 @@ public class TaskWorker implements Runnable {
     @Override
     public void run() {
         try {
-            context.doFilter(request, ctx);
+            // set执行上下文环境
+            context.setLocalContext(request, ctx);
             ActionTake tack = new ActionTake(context);
             Response act = tack.act(request);
             if (act != null) {
@@ -53,6 +52,7 @@ public class TaskWorker implements Runnable {
         } catch (IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
+            // remove执行上下文环境
             context.removeLocalContext();
         }
 

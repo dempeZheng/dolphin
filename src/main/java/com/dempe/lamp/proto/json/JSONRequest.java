@@ -32,7 +32,7 @@ public class JSONRequest implements Request {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("uri", uri);
         jsonObject.put("data", data);
-        jsonObject.put("id",id);
+        jsonObject.put("id", id);
         pack.putVarstr(jsonObject.toJSONString());
     }
 
@@ -75,7 +75,7 @@ public class JSONRequest implements Request {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("uri", uri);
         jsonObject.put("data", data);
-        jsonObject.put("id",id);
+        jsonObject.put("id", id);
         return jsonObject.toString();
     }
 }

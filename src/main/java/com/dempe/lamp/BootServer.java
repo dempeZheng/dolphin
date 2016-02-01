@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Created with IntelliJ IDEA.
+ * 框架启动基类
  * User: Dempe
  * Date: 2015/10/15
  * Time: 16:41

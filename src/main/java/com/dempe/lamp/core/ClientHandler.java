@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created with IntelliJ IDEA.
+ * client的消息处理handler,处理服务端返回的消息
  * User: Dempe
  * Date: 2016/1/28
  * Time: 18:47
@@ -27,11 +27,12 @@ public class ClientHandler extends ChannelHandlerAdapter {
         try {
             Response resp = (Response) msg;
             Integer id = resp.id();
+            // 从发送消息队列ReplyWaitQueue take对应的future(消息发送前会将消息放到ReplyWaitQueue)
             ReplyFuture future = replyQueue.take(id);
             if (future == null) {
-                //TODO
                 return;
             }
+            // 唤醒对应的future
             future.onReceivedReply(resp);
             LOGGER.debug("result = {}", resp.toString());
         } finally {

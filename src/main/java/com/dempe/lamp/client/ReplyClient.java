@@ -6,7 +6,7 @@ import com.dempe.lamp.proto.Response;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created with IntelliJ IDEA.
+ * 有返回消息的client实现
  * User: Dempe
  * Date: 2016/1/28
  * Time: 18:32
@@ -14,8 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ReplyClient extends CommonClient {
 
+    // 消息id生成器，消息id用户标识消息，标识sendAndWait方法的返回
     private static AtomicInteger idMaker = new AtomicInteger(0);
 
+    // 消息返回会被装入到队列里
     private ReplyWaitQueue replyQueue = new ReplyWaitQueue();
 
 
@@ -24,6 +26,11 @@ public class ReplyClient extends CommonClient {
     }
 
 
+    /**
+     * 仅仅发送消息，不关心返回
+     *
+     * @param request
+     */
     public void sendOnly(Request request) {
         int id = idMaker.incrementAndGet();
         request.setId(id);
@@ -31,9 +38,14 @@ public class ReplyClient extends CommonClient {
     }
 
 
+    /**
+     * 发送消息，并等待Response
+     *
+     * @param request
+     * @return Response
+     */
     public Response sendAndWait(Request request) {
         int id = idMaker.incrementAndGet();
-        System.out.println("id:" + id);
         request.setId(id);
         try {
             ReplyFuture future = new ReplyFuture(id);
@@ -46,6 +58,14 @@ public class ReplyClient extends CommonClient {
 
     }
 
+
+    /**
+     * 发送消息，指定超时时间，等待Response
+     *
+     * @param request 请求消息
+     * @param timeout 超时时间
+     * @return Response
+     */
     public Response sendAndWait(Request request, long timeout) {
         int id = idMaker.incrementAndGet();
         request.setId(id);

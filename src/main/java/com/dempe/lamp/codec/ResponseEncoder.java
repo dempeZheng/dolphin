@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Created with IntelliJ IDEA.
+ * Response消息编码类
  * User: Dempe
  * Date: 2015/12/10
  * Time: 17:34

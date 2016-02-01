@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 
 /**
- * Created with IntelliJ IDEA.
+ * action方法类
  * User: Dempe
  * Date: 2015/10/15
  * Time: 16:19

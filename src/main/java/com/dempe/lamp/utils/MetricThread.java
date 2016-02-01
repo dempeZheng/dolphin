@@ -9,6 +9,8 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 性能监控工具类
+ *
  * @author : Dempe
  * @version 1.0 date : 2014/11/24
  */

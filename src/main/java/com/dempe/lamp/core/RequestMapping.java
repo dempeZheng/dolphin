@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created with IntelliJ IDEA.
+ * 消息路由映射
+ * 根据controller name&path name映射成对应uri
  * User: zhengdaxia
  * Date: 15/10/17
  * Time: 上午10:41
@@ -49,9 +50,9 @@ public class RequestMapping {
         List<String> packages = new ArrayList<String>();
 
         packages.add(config.getPackageName());
-        LOGGER.info("scanned packages : " + packages);
+        LOGGER.info("scanned packages :{} ", packages);
         for (String scanPackage : packages) {
-            LOGGER.info("begin get classes from package : " + scanPackage);
+            LOGGER.info("begin get classes from package {} : ", scanPackage);
             String[] classNames = PackageUtils.findClassesInPackage(scanPackage + ".*"); // 目录下通配
             for (String className : classNames) {
                 try {
@@ -64,7 +65,7 @@ public class RequestMapping {
                     if (StringUtils.isBlank(actionVal)) {
                         actionVal = StringUtils.uncapitalize(actionClass.getSimpleName());
                     }
-                    LOGGER.info("registering action  : " + actionVal);
+                    LOGGER.info("registering action  :{} ", actionVal);
                     for (Method method : actionClass.getDeclaredMethods()) {
                         if (method.getModifiers() == Modifier.PUBLIC) {
                             Path refs = method.getAnnotation(Path.class);

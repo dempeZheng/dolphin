@@ -11,7 +11,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
+ * Request请求解码类
  * User: Dempe
  * Date: 2015/12/10
  * Time: 17:34
