@@ -1,23 +1,24 @@
 package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.pack.ProtocolValue;
-import com.dempe.lamp.codec.pack.Unpack;
-import com.dempe.lamp.proto.json.JSONRequest;
+import com.dempe.lamp.utils.pack.Marshallable;
+import com.dempe.lamp.utils.pack.ProtocolValue;
+import com.dempe.lamp.utils.pack.Unpack;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
+import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.List;
 
 /**
- * Request请求解码类
+ * Created with IntelliJ IDEA.
  * User: Dempe
- * Date: 2015/12/10
- * Time: 17:34
+ * Date: 2016/2/1
+ * Time: 12:33
  * To change this template use File | Settings | File Templates.
  */
-public class RequestDecoder extends ByteToMessageDecoder {
+public abstract class AbstractDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf buf, List<Object> list) throws Exception {
@@ -45,11 +46,12 @@ public class RequestDecoder extends ByteToMessageDecoder {
         byte protoType = (byte) protoValue[0];
 
         if (protoType == 0) {
-            JSONRequest proto = new JSONRequest();
-            proto.unmarshal(unpack);
+            Marshallable proto = decode(unpack);
             list.add(proto);
         }
 
     }
+
+    public abstract Marshallable decode(Unpack unpack) throws IOException;
 
 }

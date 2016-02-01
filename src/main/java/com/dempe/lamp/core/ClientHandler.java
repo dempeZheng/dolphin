@@ -26,7 +26,7 @@ public class ClientHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
             Response resp = (Response) msg;
-            Integer id = resp.id();
+            Integer id = resp.getId();
             // 从发送消息队列ReplyWaitQueue take对应的future(消息发送前会将消息放到ReplyWaitQueue)
             ReplyFuture future = replyQueue.take(id);
             if (future == null) {

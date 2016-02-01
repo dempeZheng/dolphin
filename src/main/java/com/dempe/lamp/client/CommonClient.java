@@ -1,14 +1,14 @@
 package com.dempe.lamp.client;
 
 
-import com.dempe.lamp.core.ClientHandlerInitializer;
+import com.dempe.lamp.codec.json.JSONRequestEncoder;
+import com.dempe.lamp.codec.json.JSONResponseDecoder;
+import com.dempe.lamp.core.ClientHandler;
 import com.dempe.lamp.proto.Request;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -47,7 +47,6 @@ public class CommonClient implements Client {
 
     private long connectTimeout = 5000L;
 
-
     public CommonClient(String host, int port) {
         this.host = host;
         this.port = port;
@@ -63,7 +62,12 @@ public class CommonClient implements Client {
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .channel(NioSocketChannel.class)
-                .handler(new ClientHandlerInitializer());
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        initClientChannel(ch);
+                    }
+                });
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -76,6 +80,13 @@ public class CommonClient implements Client {
             }
         }));
         connect(host, port);
+    }
+
+    public void initClientChannel(SocketChannel ch) {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast("RequestEncoder", new JSONRequestEncoder())
+                .addLast("ResponseDecoder", new JSONResponseDecoder())
+                .addLast("ClientHandler", new ClientHandler());
     }
 
 

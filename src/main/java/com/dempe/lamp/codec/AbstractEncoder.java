@@ -1,8 +1,9 @@
 package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.pack.Pack;
-import com.dempe.lamp.codec.pack.ProtocolValue;
-import com.dempe.lamp.proto.Response;
+import com.dempe.lamp.codec.json.JSONRequestEncoder;
+import com.dempe.lamp.utils.pack.Marshallable;
+import com.dempe.lamp.utils.pack.Pack;
+import com.dempe.lamp.utils.pack.ProtocolValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.EncoderException;
@@ -14,31 +15,31 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Response消息编码类
+ * Created with IntelliJ IDEA.
  * User: Dempe
- * Date: 2015/12/10
- * Time: 17:34
+ * Date: 2016/2/1
+ * Time: 12:37
  * To change this template use File | Settings | File Templates.
  */
-public class ResponseEncoder extends MessageToByteEncoder<Response> {
+public abstract class AbstractEncoder extends MessageToByteEncoder<Marshallable> {
 
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ResponseEncoder.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(JSONRequestEncoder.class);
 
     private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
 
 
     /**
      * @param channelHandlerContext
-     * @param response
+     * @param request
      * @param byteBuf
      * @throws Exception
      */
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Response response, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Marshallable request, ByteBuf byteBuf) throws Exception {
         try {
-            Pack pack = new Pack();
-            response.marshal(pack);
+            Pack pack = encode(request);
+
             ByteBuffer data = pack.getBuffer();
             byte protoType = 0;
             if (pack.getAttachment() != null) {
@@ -64,7 +65,7 @@ public class ResponseEncoder extends MessageToByteEncoder<Response> {
         out.put(data);
         out.flip();
         return out.array();
-
-
     }
+
+    public abstract Pack encode(Marshallable request);
 }

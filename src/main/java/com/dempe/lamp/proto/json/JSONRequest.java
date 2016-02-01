@@ -1,13 +1,14 @@
 package com.dempe.lamp.proto.json;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dempe.lamp.codec.pack.Pack;
-import com.dempe.lamp.codec.pack.Unpack;
 import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.utils.pack.Pack;
+import com.dempe.lamp.utils.pack.Unpack;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Created with IntelliJ IDEA.
+ * json request协议的实现
  * User: Dempe
  * Date: 2016/1/28
  * Time: 14:55
@@ -29,11 +30,8 @@ public class JSONRequest implements Request {
 
     @Override
     public void marshal(Pack pack) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("uri", uri);
-        jsonObject.put("data", data);
-        jsonObject.put("id", id);
-        pack.putVarstr(jsonObject.toJSONString());
+        String str = JSON.toJSONString(this);
+        pack.putVarstr(str);
     }
 
     @Override
@@ -50,8 +48,9 @@ public class JSONRequest implements Request {
         }
     }
 
+
     @Override
-    public int id() {
+    public int getId() {
         return id;
     }
 
@@ -61,21 +60,20 @@ public class JSONRequest implements Request {
     }
 
     @Override
-    public String uri() {
+    public String getUri() {
         return uri;
     }
 
-    @Override
-    public JSONObject getParamJSON() {
-        return data;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     @Override
-    public String toString() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("uri", uri);
-        jsonObject.put("data", data);
-        jsonObject.put("id", id);
-        return jsonObject.toString();
+    public JSONObject getData() {
+        return data;
+    }
+
+    public void setData(JSONObject data) {
+        this.data = data;
     }
 }

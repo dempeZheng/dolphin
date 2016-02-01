@@ -4,7 +4,6 @@ package com.dempe.lamp.core;
 import com.alibaba.fastjson.JSONObject;
 import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.Response;
-import com.dempe.lamp.proto.json.JSONResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,9 @@ public class ActionTake implements Take<Request, Response> {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public Response act(Request request) throws InvocationTargetException, IllegalAccessException {
-        String uri = request.uri();
+    public Response act(Request request) throws InvocationTargetException, IllegalAccessException,
+            ClassNotFoundException, InstantiationException {
+        String uri = request.getUri();
         if (StringUtils.isBlank(uri)) {
             LOGGER.warn("[dispatcher]:jsonURI is blank");
             return null;
@@ -53,7 +53,7 @@ public class ActionTake implements Take<Request, Response> {
         Method method = actionMethod.getMethod();
         // 获取方法参数
         String[] parameterNames = MethodParam.getParameterNames(method);
-        JSONObject params = request.getParamJSON();
+        JSONObject params = request.getData();
         // 获取方法执行参数值
         Object[] parameterValues = MethodParam.getParameterValues(parameterNames, method, params);
         Object result = MethodInvoker.interceptorInvoker(actionMethod, parameterValues);
@@ -62,9 +62,24 @@ public class ActionTake implements Take<Request, Response> {
             LOGGER.debug("actionMethod:{} return void.", actionMethod);
             return null;
         }
-        JSONResponse resp = new JSONResponse();
+        int id = request.getId();
+        return buildResp(id, result);
+
+
+    }
+
+    /**
+     * 封装返回消息
+     *
+     * @param id
+     * @param result
+     * @return
+     */
+    public Response buildResp(int id, Object result) throws IllegalAccessException, InstantiationException,
+            ClassNotFoundException {
+        Response resp = context.buildResponse();
         // set请求消息id标识，用于client将Response&Request对应
-        resp.setId(request.id());
+        resp.setId(id);
         if (result instanceof JSONObject) {
             resp.setData((JSONObject) result);
         }

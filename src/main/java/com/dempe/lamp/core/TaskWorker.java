@@ -51,6 +51,10 @@ public class TaskWorker implements Runnable {
             LOGGER.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error(e.getMessage(), e);
+        } catch (InstantiationException e) {
+            LOGGER.error(e.getMessage(), e);
         } finally {
             // remove执行上下文环境
             context.removeLocalContext();

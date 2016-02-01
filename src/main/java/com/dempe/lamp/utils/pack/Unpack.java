@@ -1,5 +1,6 @@
-package com.dempe.lamp.codec.pack;
+package com.dempe.lamp.utils.pack;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -175,7 +176,7 @@ public class Unpack {
         }
     }
 
-    public Marshallable popMarshallable(Marshallable mar) {
+    public Marshallable popMarshallable(Marshallable mar) throws IOException {
         mar.unmarshal(this);
         return mar;
     }

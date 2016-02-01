@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface Take<R, T> {
 
-    T act(R request) throws InvocationTargetException, IllegalAccessException;
+    T act(R request) throws InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException;
 
 
 }

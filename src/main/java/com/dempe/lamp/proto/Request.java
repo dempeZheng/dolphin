@@ -1,10 +1,10 @@
 package com.dempe.lamp.proto;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dempe.lamp.codec.pack.Marshallable;
+import com.dempe.lamp.utils.pack.Marshallable;
 
 /**
- * Created with IntelliJ IDEA.
+ * 请求消息
  * User: Dempe
  * Date: 2016/1/28
  * Time: 17:40
@@ -12,8 +12,18 @@ import com.dempe.lamp.codec.pack.Marshallable;
  */
 public interface Request extends Marshallable {
 
-    int id();
+    /**
+     * 获取消息id标识
+     *
+     * @return
+     */
+    int getId();
 
+    /**
+     * set消息id标志
+     *
+     * @param id
+     */
     void setId(int id);
 
     /**
@@ -21,7 +31,7 @@ public interface Request extends Marshallable {
      *
      * @return
      */
-    String uri();
+    String getUri();
 
 
     /**
@@ -29,5 +39,5 @@ public interface Request extends Marshallable {
      *
      * @return
      */
-    JSONObject getParamJSON();
+    JSONObject getData();
 }

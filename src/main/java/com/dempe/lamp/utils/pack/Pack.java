@@ -1,4 +1,4 @@
-package com.dempe.lamp.codec.pack;
+package com.dempe.lamp.utils.pack;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.BufferOverflowException;

@@ -19,9 +19,6 @@ public interface AppConfig extends Config {
     int port();
 
     @DefaultValue("true")
-    boolean isMaster();
-
-    @DefaultValue("true")
     boolean tcpNoDelay();
 
     @DefaultValue("true")
@@ -30,6 +27,18 @@ public interface AppConfig extends Config {
     @Key("common.package")
     @DefaultValue("com.dempe.lamp")
     String getPackageName();
+
+    @Key("server.decode.class")
+    @DefaultValue("com.dempe.lamp.codec.json.JSONRequestDecoder")
+    String decoderClass();
+
+    @Key("server.encode.class")
+    @DefaultValue("com.dempe.lamp.codec.json.JSONResponseEncoder")
+    String encoderClass();
+
+    @Key("server.response.class")
+    @DefaultValue("com.dempe.lamp.proto.json.JSONResponse")
+    String respClass();
 
 
     // ***********************application configuration*****************

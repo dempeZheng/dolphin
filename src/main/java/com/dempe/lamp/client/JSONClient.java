@@ -1,7 +1,12 @@
 package com.dempe.lamp.client;
 
+import com.dempe.lamp.codec.json.JSONRequestEncoder;
+import com.dempe.lamp.codec.json.JSONResponseDecoder;
+import com.dempe.lamp.core.ClientHandler;
 import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.Response;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.socket.SocketChannel;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 18:32
  * To change this template use File | Settings | File Templates.
  */
-public class ReplyClient extends CommonClient {
+public class JSONClient extends CommonClient {
 
     // 消息id生成器，消息id用户标识消息，标识sendAndWait方法的返回
     private static AtomicInteger idMaker = new AtomicInteger(0);
@@ -21,10 +26,22 @@ public class ReplyClient extends CommonClient {
     private ReplyWaitQueue replyQueue = new ReplyWaitQueue();
 
 
-    public ReplyClient(String host, int port) {
+    public JSONClient(String host, int port) {
         super(host, port);
     }
 
+    /**
+     * 指定json编码
+     *
+     * @param ch
+     */
+    @Override
+    public void initClientChannel(SocketChannel ch) {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast("RequestEncoder", new JSONRequestEncoder())
+                .addLast("ResponseDecoder", new JSONResponseDecoder())
+                .addLast("ClientHandler", new ClientHandler());
+    }
 
     /**
      * 仅仅发送消息，不关心返回

@@ -1,4 +1,4 @@
-package com.dempe.lamp.codec.pack;
+package com.dempe.lamp.utils.pack;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
