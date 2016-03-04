@@ -25,4 +25,6 @@ public interface Response extends Marshallable {
     void setData(JSONObject data);
 
 
+
+
 }

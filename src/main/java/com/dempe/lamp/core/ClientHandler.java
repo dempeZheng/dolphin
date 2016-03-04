@@ -24,9 +24,10 @@ public class ClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        Integer id = 0;
         try {
             Response resp = (Response) msg;
-            Integer id = resp.getId();
+            id = resp.getId();
             // 从发送消息队列ReplyWaitQueue take对应的future(消息发送前会将消息放到ReplyWaitQueue)
             ReplyFuture future = replyQueue.take(id);
             if (future == null) {
@@ -34,9 +35,9 @@ public class ClientHandler extends ChannelHandlerAdapter {
             }
             // 唤醒对应的future
             future.onReceivedReply(resp);
-            LOGGER.debug("result = {}", resp.toString());
         } finally {
             ReferenceCountUtil.release(msg);
+            replyQueue.remove((Long.valueOf(id)));
         }
     }
 

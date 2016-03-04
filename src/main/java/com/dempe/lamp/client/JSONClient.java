@@ -64,15 +64,19 @@ public class JSONClient extends CommonClient {
     public Response sendAndWait(Request request) {
         int id = idMaker.incrementAndGet();
         request.setId(id);
-        try {
-            ReplyFuture future = new ReplyFuture(id);
-            replyQueue.add(future);
-            send(request);
-            return future.getReply();
-        } finally {
-            replyQueue.remove(id);
-        }
+        ReplyFuture future = new ReplyFuture(id);
+        replyQueue.add(future);
+        send(request);
+        return future.getReply();
+    }
 
+    public ReplyFuture sendAndWaitNew(Request request) {
+        int id = idMaker.incrementAndGet();
+        request.setId(id);
+        ReplyFuture future = new ReplyFuture(id);
+        replyQueue.add(future);
+        send(request);
+        return future;
     }
 
 
@@ -86,15 +90,11 @@ public class JSONClient extends CommonClient {
     public Response sendAndWait(Request request, long timeout) {
         int id = idMaker.incrementAndGet();
         request.setId(id);
-        try {
-            ReplyFuture future = new ReplyFuture(id);
-            replyQueue.add(future);
-            future.setReadTimeoutMillis(timeout);
-            send(request);
-            return future.getReply();
-        } finally {
-            replyQueue.remove(id);
-        }
+        ReplyFuture future = new ReplyFuture(id);
+        replyQueue.add(future);
+        future.setReadTimeoutMillis(timeout);
+        send(request);
+        return future.getReply();
 
     }
 }

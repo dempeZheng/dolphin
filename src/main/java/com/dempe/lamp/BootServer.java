@@ -46,7 +46,7 @@ public class BootServer implements Server {
 
 
     public void init() {
-        executorGroup = new DefaultEventExecutorGroup(4, new DefaultThreadFactory("decode-worker-thread-pool"));
+        executorGroup = new DefaultEventExecutorGroup(Runtime.getRuntime().availableProcessors() * 2, new DefaultThreadFactory("decode-worker-thread-pool"));
         ChannelInitializer channelInitializer = new ServerHandlerInitializer(Servercontext);
         init(channelInitializer);
     }

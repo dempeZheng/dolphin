@@ -1,6 +1,7 @@
 package com.dempe.lamp.core;
 
 import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.utils.MetricThread;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -20,9 +21,9 @@ public class ProcessorHandler extends ChannelHandlerAdapter {
     public static final Logger LOGGER = LoggerFactory.getLogger(ProcessorHandler.class);
 
     // 业务逻辑线程池(业务逻辑最好跟netty io线程分开处理，线程切换虽会带来一定的性能损耗，但可以防止业务逻辑阻塞io线程)
-    private final static ExecutorService workerThreadService = newBlockingExecutorsUseCallerRun(100);
+    private final static ExecutorService workerThreadService = newBlockingExecutorsUseCallerRun(Runtime.getRuntime().availableProcessors() * 2);
 
-    //    private static MetricThread metricThread =new MetricThread("lamp");
+    private static MetricThread metricThread = new MetricThread("lamp");
     private ServerContext context;
 
     public ProcessorHandler(ServerContext context) {
@@ -33,7 +34,7 @@ public class ProcessorHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //  ent protocol
 //        LOGGER.info("dispatch msg:{}", msg);
-//        metricThread.increment();
+        metricThread.increment();
         if (msg instanceof Request) {
             workerThreadService.submit(new TaskWorker(ctx, context, (Request) msg));
         }
