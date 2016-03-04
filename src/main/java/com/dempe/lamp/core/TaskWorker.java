@@ -38,11 +38,17 @@ public class TaskWorker implements Runnable {
             // set执行上下文环境
             context.setLocalContext(request, ctx);
             ActionTake tack = new ActionTake(context);
-            Response act = tack.act(request);
+            final Response act = tack.act(request);
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
 //                LOGGER.info("act:{}", act.toString());
-                ctx.writeAndFlush(act);
+                ctx.executor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        ctx.writeAndFlush(act);
+                    }
+                });
+
 //                metricThread.increment();
             } else {
                 ReferenceCountUtil.release(act);
