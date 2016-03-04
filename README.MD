@@ -110,7 +110,9 @@ public class LampClient {
     }
 }
 
+
 ###性能测试
-开发机 4核 8G win7
+
+>开发机 4核 8G win7
 sendAndWait(Request req) 4w+
 sendOnly(Request req)
