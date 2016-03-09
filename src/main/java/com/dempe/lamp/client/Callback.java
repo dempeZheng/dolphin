@@ -1,7 +1,5 @@
 package com.dempe.lamp.client;
 
-import com.dempe.lamp.proto.IDMessage;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Dempe
@@ -9,7 +7,7 @@ import com.dempe.lamp.proto.IDMessage;
  * Time: 10:35
  * To change this template use File | Settings | File Templates.
  */
-public interface Callback<M> {
+public interface Callback<T> {
 
-    public void onReceive(M message);
+    public void onReceive(T message);
 }
