@@ -23,7 +23,7 @@ public class BlockingClient {
         return future.await();
     }
 
-    public void sendOnly(Request request) {
+    public void sendOnly(Request request) throws Exception {
         futureClient.sendOnly(request);
     }
 }

@@ -27,7 +27,7 @@ public class CallbackClient extends CommonClient {
         super(host, port);
     }
 
-    public void sendOnly(Request request) {
+    public void sendOnly(Request request) throws Exception {
         send(request);
     }
 
@@ -37,7 +37,7 @@ public class CallbackClient extends CommonClient {
      * @param request
      * @return Response
      */
-    public Callback send(Request request, Callback callback) {
+    public Callback send(Request request, Callback callback) throws Exception {
         int id = getNextMessageId();
         request.setMessageID(id);
         Context context = new Context(id, request, callback);

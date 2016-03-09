@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  */
 public interface Client {
 
-    public void send(Request request);
+    public void send(Request request) throws InterruptedException, ExecutionException, TimeoutException, IOException;
 
     public boolean reconnect() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 

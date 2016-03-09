@@ -24,7 +24,7 @@ public class FutureClient {
         return future;
     }
 
-    public void sendOnly(Request request) {
+    public void sendOnly(Request request) throws Exception {
         client.sendOnly(request);
     }
 }

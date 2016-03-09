@@ -152,7 +152,10 @@ public class CommonClient implements Client {
         }
     }
 
-    public void send(Request request) {
+    public void send(Request request) throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        if (!isConnected()) {
+            reconnect();
+        }
         f.channel().writeAndFlush(request);
     }
 
