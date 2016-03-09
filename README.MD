@@ -4,44 +4,32 @@
 ##modules
 ![Alt text](./doc/lamp-modules.png)
 ##protocol
->现仅支持私有JSONP协议
->TODO 自定义协议扩展，开放解包封包实现
+>自定义协议
 
+Request
+``` java
+	protected int messageID;//消息序列号id，用于标识消息
 
-###JSONP实现
-RequestJSON
-``` json
-{
-	"id": 0,
-	"uri": "/lamp/test",
-	"data": {
-		"name": "dempe"
-	}
-}
+    private String uri;// 消息uri，用于路由消息到指定controller method
+
+    private Map<String, String> paramMap;// 请求参数map，支持基本类型参数
 ```
-- id： 消息序列号，用户标志消息
-- uri：消息uri,用户路由到对应业务
-- data: 请求参数json
 
-ResponseJSON
-``` json
-{
-	"id": 0,
-	"uri": "/lamp/test",
-	"data": {
-		"data": "6666"
-	}
 
-}
+Response
+``` java
+ private int messageID;// 对应请求消息的id
+
+ private String data;// 消息返回数据，通常为json串
 ```
-- id： 消息序列号，用户标志消息
-- uri：消息uri,对应请求uri
-- data: 返回结果
 
 
 ##example
+
 ###服务端的打开方式
+
 ####基于spring注解的打开方式
+
 ``` java
 @Configuration
 @ComponentScan
@@ -55,12 +43,15 @@ public class LampServer {
 }
 ```
 ####基于spring xml的打开方式
+
 ``` java
  ApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"application.xml"});
         BaseServer baseServer = new BaseServer(DefConfigFactory.createDEVConfig(), context);
         baseServer.start();
 ```
+
 application.xml配置如下
+
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -76,41 +67,132 @@ application.xml配置如下
     <context:component-scan base-package="com.dempe.lamp"/>
 
 </beans>
+
+
 ```
+
 ###业务逻辑的编写方式
+
 ``` java
-@Controller("lamp")
-public class LampController {
 
+@Controller("sample")
+public class SampleController {
+
+    //依赖spring的注入
     @Resource
-    LampService lampService;
+    SampleService lampService;
 
+    /**
+     * 默认匹配path getUri=/sample/hello
+     * 默认注入request name属性的参数值
+     * @return
+     */
     @Path
-    public JSONObject test(@Param String name) {
-        System.out.println("name===>" + name);
-        lampService.say();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", 6666);
-        return jsonObject;
+    public JSONObject hello(@Param String name,@Param int age) {
+//        System.out.println(age);
+        return lampService.hello(name);
     }
 }
 
 ```
+
+
 ###客户端的使用方式
+
 ``` java
-public class LampClient {
-    public static void main(String[] args) {
-        ReplyClient client = new ReplyClient("localhost", 8888);
-        JSONObject data = new JSONObject();
-        data.put("name", "dempe");
-        JSONRequest request = new JSONRequest("/lamp/test", data);
-        Response response = client.sendAndWait(request);
-        client.sendOnly(request);
+/**
+ * 简单client示例
+ * User: Dempe
+ * Date: 2016/1/28
+ * Time: 15:43
+ * To change this template use File | Settings | File Templates.
+ */
+public class SampleClient {
+
+    public static void main(String[] args) throws Exception {
+        futureClientExample();
+    }
+
+    /**
+     * FutureClient example
+     * @throws Exception
+     */
+    public static void futureClientExample() throws Exception {
+        FutureClient client = new FutureClient("localhost", 8888);
+        // 构造json请求协议
+        Request request = buildRequest();
+        Future<Response> future = client.send(request);
+        System.out.println(future.await());
+    }
+
+    /**
+     * BlockingClient example
+     * @throws Exception
+     */
+    public static void blockingClientExample() throws Exception {
+        BlockingClient client = new BlockingClient("localhost", 8888);
+        Request request = buildRequest();
+        Response response = client.send(request);
         System.out.println(response);
     }
+
+    /**
+     * CallbackClient example
+     * @throws Exception
+     */
+    public static void callbackClientExample() throws Exception {
+        CallbackClient client = new CallbackClient("localhost", 8888);
+        Request request = buildRequest();
+        client.send(request, new Callback() {
+            @Override
+            public void onReceive(Object message) {
+                System.out.println(message);
+            }
+        });
+    }
+
+    public static Request buildRequest() {
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("name", "dempe");
+        data.put("age", "1");
+        Request request = new Request();
+        request.setUri("/sample/hello");
+        request.setParamMap(data);
+        return request;
+    }
+
+
+    /**
+     * 压测方法
+     * @throws Exception
+     */
+    public static void stressTesting() throws Exception {
+        MetricThread thread = new MetricThread("client");
+        List<FutureClient> clientList = new ArrayList<FutureClient>();
+        int size = 8;
+        for (int i = 0; i < size; i++) {
+            clientList.add(new FutureClient("localhost", 8888));
+        }
+        int i = 0;
+        while (true) {
+            i++;
+            thread.increment();
+            FutureClient client = clientList.get(i % size);
+            // 初始化client
+            Request request = buildRequest();
+            //发送请求并返回响应
+            Future<Response> future = client.send(request);
+            if (i % 100000 == 0) {
+                TimeUnit.SECONDS.sleep(1);
+            }
+        }
+    }
+
+
 }
+
+```
 
 ###性能测试
 
->开发机 4核 8G win7
-sendAndWait(Request req) 4w+
+>开发机 4核 8G win7  7w+
