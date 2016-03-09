@@ -28,17 +28,7 @@ public interface AppConfig extends Config {
     @DefaultValue("com.dempe.lamp")
     String getPackageName();
 
-    @Key("server.decode.class")
-    @DefaultValue("com.dempe.lamp.codec.json.JSONRequestDecoder")
-    String decoderClass();
 
-    @Key("server.encode.class")
-    @DefaultValue("com.dempe.lamp.codec.json.JSONResponseEncoder")
-    String encoderClass();
-
-    @Key("server.response.class")
-    @DefaultValue("com.dempe.lamp.proto.json.JSONResponse")
-    String respClass();
 
 
     // ***********************application configuration*****************

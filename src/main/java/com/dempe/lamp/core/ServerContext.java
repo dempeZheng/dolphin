@@ -2,10 +2,7 @@ package com.dempe.lamp.core;
 
 
 import com.dempe.lamp.AppConfig;
-import com.dempe.lamp.codec.AbstractDecoder;
-import com.dempe.lamp.codec.AbstractEncoder;
 import com.dempe.lamp.proto.Request;
-import com.dempe.lamp.proto.Response;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.ApplicationContext;
 
@@ -22,17 +19,13 @@ public class ServerContext {
     public RequestMapping mapping;
     public AppConfig config;
     private ApplicationContext context;
-    private String decodeClassStr;
-    private String encodeClassStr;
-    private String responseClassStr;
+
 
     public ServerContext(AppConfig config, ApplicationContext context) {
         this.config = config;
         this.context = context;
         this.mapping = new RequestMapping(config, context);
-        this.decodeClassStr = config.decoderClass();
-        this.encodeClassStr = config.encoderClass();
-        this.responseClassStr = config.respClass();
+
     }
 
     /**
@@ -53,17 +46,7 @@ public class ServerContext {
         return context;
     }
 
-    public Class<? extends AbstractDecoder> getDecoder() throws ClassNotFoundException {
-        return (Class<? extends AbstractDecoder>) Class.forName(decodeClassStr);
-    }
 
-    public Class<? extends AbstractEncoder> getEncoder() throws ClassNotFoundException {
-        return (Class<? extends AbstractEncoder>) Class.forName(encodeClassStr);
-    }
-
-    public Response buildResponse() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        return (Response) (Class.forName(responseClassStr).newInstance());
-    }
 
 
     /**

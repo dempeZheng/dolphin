@@ -1,6 +1,5 @@
 package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.json.JSONRequestEncoder;
 import com.dempe.lamp.utils.pack.Marshallable;
 import com.dempe.lamp.utils.pack.Pack;
 import com.dempe.lamp.utils.pack.ProtocolValue;
@@ -24,7 +23,7 @@ import java.nio.ByteOrder;
 public abstract class AbstractEncoder extends MessageToByteEncoder<Marshallable> {
 
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(JSONRequestEncoder.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MarshallableEncoder.class);
 
     private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
 

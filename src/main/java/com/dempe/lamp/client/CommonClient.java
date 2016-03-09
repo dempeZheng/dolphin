@@ -1,10 +1,12 @@
 package com.dempe.lamp.client;
 
 
-import com.dempe.lamp.codec.json.JSONRequestEncoder;
-import com.dempe.lamp.codec.json.JSONResponseDecoder;
-import com.dempe.lamp.core.ClientHandler;
+import com.dempe.lamp.codec.IDMessageDecoder;
+import com.dempe.lamp.codec.MarshallableEncoder;
+import com.dempe.lamp.proto.IDMessage;
 import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.Response;
+import com.dempe.lamp.utils.pack.Unpack;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -46,6 +50,21 @@ public class CommonClient implements Client {
     private int port;
 
     private long connectTimeout = 5000L;
+
+    protected Map<Integer, Context> contextMap = new ConcurrentHashMap<Integer, Context>();
+
+    public static class Context {
+        final Request request;
+        private final short id;
+        final Callback cb;
+
+        Context(int id, Request request, Callback cb) {
+            this.id = (short) id;
+            this.cb = cb;
+            this.request = request;
+        }
+    }
+
 
     public CommonClient(String host, int port) {
         this.host = host;
@@ -84,9 +103,26 @@ public class CommonClient implements Client {
 
     public void initClientChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast("RequestEncoder", new JSONRequestEncoder())
-                .addLast("ResponseDecoder", new JSONResponseDecoder())
-                .addLast("ClientHandler", new ClientHandler());
+        pipeline.addLast("RequestEncoder", new MarshallableEncoder())
+                .addLast("ResponseDecoder", new IDMessageDecoder())
+                .addLast("ClientHandler", new ChannelHandlerAdapter() {
+                    @Override
+                    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                        Integer id = 0;
+                        IDMessage message = (IDMessage) msg;
+                        id = message.getMessageID();
+                        byte[] bytes = message.getBytes();
+                        Unpack unpack = new Unpack(bytes);
+                        Response resp = new Response();
+                        resp.unmarshal(unpack);
+                        Context context = contextMap.remove(id);
+                        if (context == null) {
+                            LOGGER.debug("messageID:{}, take Context null", id);
+                            return;
+                        }
+                        context.cb.onReceive(resp);
+                    }
+                });
     }
 
 

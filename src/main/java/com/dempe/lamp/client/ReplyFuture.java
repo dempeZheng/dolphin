@@ -1,6 +1,6 @@
 package com.dempe.lamp.client;
 
-import com.dempe.lamp.proto.Response;
+import com.dempe.lamp.proto.IDResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class ReplyFuture {
 
     private long readTimeoutMillis = 120000;
 
-    private Response message;
+    private IDResponse message;
 
 
     public ReplyFuture(int messageId) {
@@ -56,12 +56,12 @@ public class ReplyFuture {
         }
     }
 
-    public synchronized void onReceivedReply(Response message) {
+    public synchronized void onReceivedReply(IDResponse message) {
         this.message = message;
         this.notifyAll();
     }
 
-    public Response getReply() {
+    public IDResponse getReply() {
         if (this.message == null) {
             await();
         }

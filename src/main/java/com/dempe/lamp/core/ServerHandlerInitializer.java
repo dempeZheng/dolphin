@@ -1,6 +1,8 @@
 package com.dempe.lamp.core;
 
 
+import com.dempe.lamp.codec.MarshallableEncoder;
+import com.dempe.lamp.codec.RequestDecoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -23,8 +25,8 @@ public class ServerHandlerInitializer extends ChannelInitializer<SocketChannel> 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast("RequestDecoder", context.getDecoder().newInstance())
-                .addLast("ResponseEncoder", context.getEncoder().newInstance())
+        pipeline.addLast("RequestDecoder", new RequestDecoder())
+                .addLast("ResponseEncoder", new MarshallableEncoder())
                 .addLast("dispatcher", new ProcessorHandler(context))
         ;
     }

@@ -1,7 +1,6 @@
-package com.dempe.lamp.codec.json;
+package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.AbstractDecoder;
-import com.dempe.lamp.proto.json.JSONRequest;
+import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.utils.pack.Marshallable;
 import com.dempe.lamp.utils.pack.Unpack;
 
@@ -12,11 +11,11 @@ import com.dempe.lamp.utils.pack.Unpack;
  * Time: 17:34
  * To change this template use File | Settings | File Templates.
  */
-public class JSONRequestDecoder extends AbstractDecoder {
+public class RequestDecoder extends AbstractDecoder {
 
     @Override
     public Marshallable decode(Unpack unpack) {
-        JSONRequest proto = new JSONRequest();
+        Request proto = new Request();
         proto.unmarshal(unpack);
         return proto;
     }

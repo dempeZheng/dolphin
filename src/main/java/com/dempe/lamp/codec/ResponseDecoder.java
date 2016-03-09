@@ -1,7 +1,6 @@
-package com.dempe.lamp.codec.json;
+package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.AbstractDecoder;
-import com.dempe.lamp.proto.json.JSONResponse;
+import com.dempe.lamp.proto.Response;
 import com.dempe.lamp.utils.pack.Marshallable;
 import com.dempe.lamp.utils.pack.Unpack;
 
@@ -14,12 +13,12 @@ import java.io.IOException;
  * Time: 17:34
  * To change this template use File | Settings | File Templates.
  */
-public class JSONResponseDecoder extends AbstractDecoder {
+public class ResponseDecoder extends AbstractDecoder {
 
 
     @Override
     public Marshallable decode(Unpack unpack) throws IOException {
-        JSONResponse response = new JSONResponse();
+        Response response = new Response();
         response.unmarshal(unpack);
         return response;
     }

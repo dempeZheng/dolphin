@@ -1,7 +1,7 @@
 package com.dempe.lamp.core;
 
 import com.dempe.lamp.proto.Request;
-import com.dempe.lamp.proto.Response;
+import com.dempe.lamp.proto.IDResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class TaskWorker implements Runnable {
             // set执行上下文环境
             context.setLocalContext(request, ctx);
             ActionTake tack = new ActionTake(context);
-            final Response act = tack.act(request);
+            final IDResponse act = tack.act(request);
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
 //                LOGGER.info("act:{}", act.toString());
