@@ -1,10 +1,9 @@
 package com.dempe.lamp.client;
 
 import com.dempe.lamp.proto.Request;
+import com.dempe.lamp.proto.Response;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,13 +14,23 @@ import java.util.concurrent.TimeoutException;
  */
 public interface Client {
 
-    public void send(Request request) throws InterruptedException, ExecutionException, TimeoutException, IOException;
 
-    public boolean reconnect() throws IOException, InterruptedException, ExecutionException, TimeoutException;
+    public void sendOnly(Request request) throws Exception;
 
-    public boolean isConnected();
+    /**
+     * 发送消息，并等待Response
+     *
+     * @param request
+     * @return Response
+     */
+    public Callback call(Request request, Callback callback) throws Exception;
 
-    public void close();
+    public Future<Response> send(Request request) throws Exception;
+
+
+    public Response sendAnWait(Request request) throws Exception;
+
+    public Response sendAnWait(Request request, long amount, TimeUnit unit) throws Exception;
 
 
 }

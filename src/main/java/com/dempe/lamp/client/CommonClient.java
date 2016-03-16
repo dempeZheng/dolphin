@@ -17,12 +17,9 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,42 +34,30 @@ public class CommonClient implements Client {
 
     protected Bootstrap b;
 
-    protected ChannelFuture f;
-
-    protected Channel channel;
-
     protected EventLoopGroup group;
-
-    private DefaultEventExecutorGroup executorGroup;
-
-    private String host;
-
-    private int port;
-
-    private long connectTimeout = 5000L;
-
+    protected ChannelPool channelPool;
     protected Map<Integer, Context> contextMap = new ConcurrentHashMap<Integer, Context>();
+    private DefaultEventExecutorGroup executorGroup;
+    private String host;
+    private int port;
+    private int nextMessageId = 1;
 
-    public static class Context {
-        final Request request;
-        private final short id;
-        final Callback cb;
-
-        Context(int id, Request request, Callback cb) {
-            this.id = (short) id;
-            this.cb = cb;
-            this.request = request;
-        }
-    }
-
-
-    public CommonClient(String host, int port) {
+    public CommonClient(String host, int port) throws InterruptedException {
         this.host = host;
         this.port = port;
         init();
     }
 
-    private void init() {
+    private int getNextMessageId() {
+        int rc = nextMessageId;
+        nextMessageId++;
+        if (nextMessageId == 0) {
+            nextMessageId = 1;
+        }
+        return rc;
+    }
+
+    private void init() throws InterruptedException {
         b = new Bootstrap();
         group = new NioEventLoopGroup(4);
         executorGroup = new DefaultEventExecutorGroup(4,
@@ -88,17 +73,7 @@ public class CommonClient implements Client {
                     }
                 });
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    closeSync();
-                } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-        }));
-        connect(host, port);
+        channelPool = new ChannelPool(this);
     }
 
     public void initClientChannel(SocketChannel ch) {
@@ -125,52 +100,71 @@ public class CommonClient implements Client {
                 });
     }
 
+    public ChannelFuture connect() {
+        return b.connect(host, port);
 
-    public void connect(final String host, final int port) {
+    }
+
+    public ChannelFuture connect(final String host, final int port) {
+        ChannelFuture f = null;
         try {
             f = b.connect(host, port).sync();
-            channel = f.channel();
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return f;
     }
 
+    public void sendOnly(Request request) throws Exception {
+        writeAndFlush(request);
+    }
 
-    public void closeSync() throws IOException {
-        try {
-            f.channel().close().sync();
-            group.shutdownGracefully();
+    /**
+     * 发送消息，并等待Response
+     *
+     * @param request
+     * @return Response
+     */
+    public Callback call(Request request, Callback callback) throws Exception {
+        int id = getNextMessageId();
+        request.setMessageID(id);
+        Context context = new Context(id, request, callback);
+        contextMap.put(id, context);
+        writeAndFlush(request);
+        return callback;
+    }
 
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+    public Future<Response> send(Request request) throws Exception {
+        Promise<Response> future = new Promise<Response>();
+        call(request, future);
+        return future;
+    }
+
+    public Response sendAnWait(Request request) throws Exception {
+        Future<Response> future = send(request);
+        return future.await();
+    }
+
+    public Response sendAnWait(Request request, long amount, TimeUnit unit) throws Exception {
+        Future<Response> future = send(request);
+        return future.await(amount, unit);
+    }
+
+    public void writeAndFlush(Object request) throws Exception {
+        Connection connection = channelPool.getChannel();
+        connection.doTransport(request);
+    }
+
+    public static class Context {
+        final Request request;
+        final Callback cb;
+        private final short id;
+
+        Context(int id, Request request, Callback cb) {
+            this.id = (short) id;
+            this.cb = cb;
+            this.request = request;
         }
     }
-
-    public void close() {
-        if (isConnected()) {
-            f.channel().close();
-        }
-    }
-
-    public void send(Request request) throws InterruptedException, ExecutionException, TimeoutException, IOException {
-        if (!isConnected()) {
-            reconnect();
-        }
-        f.channel().writeAndFlush(request);
-    }
-
-    public boolean reconnect() throws IOException, InterruptedException, ExecutionException, TimeoutException {
-        close();
-        LOGGER.info("start reconnect to server.");
-        f = b.connect(host, port);// 异步建立长连接
-        f.get(connectTimeout, TimeUnit.MILLISECONDS); // 最多等待5秒，如连接建立成功立即返回
-        LOGGER.info("end reconnect to server result:" + isConnected());
-        return isConnected();
-    }
-
-    public boolean isConnected() {
-        return f != null && f.channel().isActive();
-    }
-
 
 }

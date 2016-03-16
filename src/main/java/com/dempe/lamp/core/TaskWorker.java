@@ -1,7 +1,7 @@
 package com.dempe.lamp.core;
 
-import com.dempe.lamp.proto.Request;
 import com.dempe.lamp.proto.IDResponse;
+import com.dempe.lamp.proto.Request;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;

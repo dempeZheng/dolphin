@@ -28,7 +28,7 @@ public class SampleController {
      * @return
      */
     @Path
-    public JSONObject hello(@Param String name,@Param int age) {
+    public JSONObject hello(@Param String name, @Param int age) {
 //        System.out.println(age);
         return lampService.hello(name);
     }

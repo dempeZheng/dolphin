@@ -1,6 +1,5 @@
 package com.dempe.lamp.codec;
 
-import com.dempe.lamp.codec.AbstractEncoder;
 import com.dempe.lamp.utils.pack.Marshallable;
 import com.dempe.lamp.utils.pack.Pack;
 

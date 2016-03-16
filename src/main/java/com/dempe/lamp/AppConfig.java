@@ -29,8 +29,6 @@ public interface AppConfig extends Config {
     String getPackageName();
 
 
-
-
     // ***********************application configuration*****************
 
     /**

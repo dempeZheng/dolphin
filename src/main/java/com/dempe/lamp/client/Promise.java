@@ -13,10 +13,9 @@ import java.util.concurrent.TimeoutException;
  */
 public class Promise<T> implements Callback<T>, Future<T> {
 
-    private T message;
     private final CountDownLatch latch = new CountDownLatch(1);
-
     Throwable error;
+    private T message;
 
     @Override
     public void onReceive(T message) {

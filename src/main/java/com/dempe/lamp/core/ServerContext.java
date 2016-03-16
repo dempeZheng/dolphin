@@ -47,8 +47,6 @@ public class ServerContext {
     }
 
 
-
-
     /**
      * 将上下文环境暴露给业务使用方
      * 将方法执行的上线文放入ThreadLocal中，便于业务逻辑中需要时获取对应的执行环境

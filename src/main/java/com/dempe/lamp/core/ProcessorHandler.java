@@ -30,18 +30,6 @@ public class ProcessorHandler extends ChannelHandlerAdapter {
         this.context = context;
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        //  ent protocol
-//        LOGGER.info("dispatch msg:{}", msg);
-        metricThread.increment();
-        if (msg instanceof Request) {
-            workerThreadService.submit(new TaskWorker(ctx, context, (Request) msg));
-        }
-
-
-    }
-
     /**
      * 阻塞的ExecutorService
      *
@@ -60,6 +48,18 @@ public class ProcessorHandler extends ChannelHandlerAdapter {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        //  ent protocol
+//        LOGGER.info("dispatch msg:{}", msg);
+        metricThread.increment();
+        if (msg instanceof Request) {
+            workerThreadService.submit(new TaskWorker(ctx, context, (Request) msg));
+        }
+
+
     }
 
 
