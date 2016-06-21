@@ -42,12 +42,14 @@ public class TaskWorker implements Runnable {
             if (act != null) {
                 // 写入的时候已经release msg 无需显示的释放
 //                LOGGER.info("act:{}", act.toString());
-                ctx.executor().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        ctx.writeAndFlush(act);
-                    }
-                });
+                // 无需显示调用netty io现成提交任务，ctx.writeAndFlush方法已经做好了封装
+                ctx.writeAndFlush(act);
+//                ctx.executor().submit(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ctx.writeAndFlush(act);
+//                    }
+//                });
 
 //                metricThread.increment();
             } else {
