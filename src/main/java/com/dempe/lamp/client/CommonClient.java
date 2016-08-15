@@ -22,7 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created with IntelliJ IDEA.
+ * TODO【严重】 消息发送超时情况，contextMap内上下文对象无法清除，存在内存溢出的风险 待添加定时任务，定期清除超时的contextMap，
+ *
  * User: Dempe
  * Date: 2015/12/11
  * Time: 17:42
@@ -36,6 +37,7 @@ public class CommonClient implements Client {
 
     protected EventLoopGroup group;
     protected ChannelPool channelPool;
+
     protected Map<Integer, Context> contextMap = new ConcurrentHashMap<Integer, Context>();
     private DefaultEventExecutorGroup executorGroup;
     private String host;
