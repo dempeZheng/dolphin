@@ -1,7 +1,7 @@
 package com.zhizus.forest.dolphin.demo.controller;
 
 import com.zhizus.forest.dolphin.annotation.ThriftService;
-import com.zhizus.forest.dolphin.demo.Sample;
+import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
 
 /**

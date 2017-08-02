@@ -12,19 +12,11 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 public class HelloController {
 
-    @Autowired
-    RestTemplate restTemplate;
-
     @RequestMapping("/hello")
     @ResponseBody
     public String hello() {
         return "hello";
     }
 
-    @RequestMapping("/sayHello")
-    @ResponseBody
-    public String sayHello() {
-        String objectResponseEntity = restTemplate.getForObject("http://localhost:8080/hello", String.class);
-        return objectResponseEntity;
-    }
+
 }

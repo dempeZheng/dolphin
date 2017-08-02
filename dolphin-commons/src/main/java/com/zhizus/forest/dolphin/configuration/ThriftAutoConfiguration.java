@@ -1,6 +1,6 @@
 package com.zhizus.forest.dolphin.configuration;
 
-import com.zhizus.forest.rpc.annotation.ThriftService;
+import com.zhizus.forest.dolphin.annotation.ThriftService;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
