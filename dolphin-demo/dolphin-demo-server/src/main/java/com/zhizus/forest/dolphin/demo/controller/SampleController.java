@@ -1,5 +1,6 @@
 package com.zhizus.forest.dolphin.demo.controller;
 
+import com.zhizus.forest.dolphin.annotation.ThriftMethodProvider;
 import com.zhizus.forest.dolphin.annotation.ThriftService;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
@@ -10,6 +11,7 @@ import org.apache.thrift.TException;
 @ThriftService("/sample")
 public class SampleController implements Sample.Iface {
 
+    @ThriftMethodProvider
     @Override
     public String hello(String para) throws TException {
         return "hello+"+para;

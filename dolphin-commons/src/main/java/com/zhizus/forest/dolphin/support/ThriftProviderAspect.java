@@ -27,7 +27,7 @@ public class ThriftProviderAspect {
 
     private final static Map<Method, MethodWrapper> thriftMethodWrapperMap = Maps.newConcurrentMap();
 
-    @Pointcut("@annotation(com.zhizus.forest.rpc.support.ThriftMethodProvider)")
+    @Pointcut("@annotation(com.zhizus.forest.dolphin.annotation.ThriftMethodProvider)")
     public void thriftProviderMethodPointcut() {
     }
 

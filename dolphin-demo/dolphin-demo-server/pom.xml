@@ -12,51 +12,16 @@
     <artifactId>dolphin-demo-server</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.zhizus.forest</groupId>
-            <artifactId>dolphin-commons</artifactId>
+            <artifactId>dolphin-demo-api</artifactId>
             <version>1.0.2</version>
         </dependency>
     </dependencies>
 
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/src/main/gen</source>
-                            </sources>
-                        </configuration>
-                    </execution>
 
 
-                    <execution>
-                        <id>add-resource</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-    </build>
 
 </project>
