@@ -1,5 +1,7 @@
 package com.zhizus.forest.dolphin.configuration;
 
+import com.zhizus.forest.dolphin.support.ThriftProviderAspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -16,9 +18,12 @@ import javax.servlet.ServletException;
 @ConditionalOnWebApplication
 public class AutoConfiguration implements ServletContextInitializer{
 
+
+
 	@Bean
-	RestTemplate restTemplate() {
-		return new RestTemplate();
+	public ThriftProviderAspect aspectThriftProvider(){
+
+		return new ThriftProviderAspect();
 	}
 
 	@Override

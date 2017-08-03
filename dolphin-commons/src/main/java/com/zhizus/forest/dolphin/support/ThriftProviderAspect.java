@@ -21,7 +21,6 @@ import java.util.Map;
  * Created by dempezheng on 2017/7/6.
  */
 @Aspect
-@Component
 public class ThriftProviderAspect {
     private static final Logger logger = LoggerFactory.getLogger(ThriftProviderAspect.class);
 

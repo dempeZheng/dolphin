@@ -2,7 +2,7 @@ package com.zhizus.forest.dolphin;
 
 
 import com.zhizus.forest.dolphin.annotation.Inject;
-import com.zhizus.forest.dolphin.demo.Application;
+import com.zhizus.forest.dolphin.demo.ServerApplication;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * Created by Dempe on 2017/7/1 0001.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = ServerApplication.class)
 @WebAppConfiguration
 public class HttpSampleTest {
 

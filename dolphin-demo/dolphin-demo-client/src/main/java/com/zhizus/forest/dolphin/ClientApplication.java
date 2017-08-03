@@ -12,13 +12,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 
-public class Application implements CommandLineRunner {
+public class ClientApplication implements CommandLineRunner {
 
     @Inject("sampleClient")
     Sample.Client client;
 
     public static void main(String[] args) throws TException {
-        SpringApplication app = new SpringApplication(Application.class);
+        SpringApplication app = new SpringApplication(ClientApplication.class);
         app.run(args);
 
     }
