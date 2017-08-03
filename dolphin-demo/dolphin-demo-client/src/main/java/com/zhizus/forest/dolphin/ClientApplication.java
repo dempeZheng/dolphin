@@ -27,7 +27,6 @@ public class ClientApplication implements CommandLineRunner {
     public static void main(String[] args) throws TException {
         SpringApplication app = new SpringApplication(ClientApplication.class);
         app.run(args);
-
     }
 
     @Override
