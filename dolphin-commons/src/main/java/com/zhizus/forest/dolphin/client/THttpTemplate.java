@@ -1,5 +1,11 @@
 package com.zhizus.forest.dolphin.client;
 
+import com.netflix.client.AbstractLoadBalancerAwareClient;
+import com.netflix.client.RequestSpecificRetryHandler;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.zhizus.forest.dolphin.ribbon.hthrift.THttpRequest;
+import com.zhizus.forest.dolphin.ribbon.hthrift.THttpResponse;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
@@ -15,9 +21,14 @@ import java.lang.reflect.Method;
 /**
  * Created by dempezheng on 2017/8/3.
  */
-public class THttpTemplate {
+public class THttpTemplate<T extends TServiceClient> extends AbstractLoadBalancerAwareClient<THttpRequest<T>, THttpResponse> {
 
-    public <X extends TServiceClient> X iface(Class<X> ifaceClass) throws Exception {
+    public THttpTemplate(ILoadBalancer lb) {
+        super(lb);
+    }
+
+
+    public T iface(Class<T> ifaceClass) throws Exception {
         final TTransport transport = null;
         // 代理
         ProxyFactory factory = new ProxyFactory();
@@ -29,8 +40,8 @@ public class THttpTemplate {
             }
         });
         try {
-            X x = (X) factory.create(new Class[]{TProtocol.class}, new Object[]{new TBinaryProtocol(transport)});
-            ((Proxy) x).setHandler(new MethodHandler() {
+            T t = (T) factory.create(new Class[]{TProtocol.class}, new Object[]{new TBinaryProtocol(transport)});
+            ((Proxy) t).setHandler(new MethodHandler() {
                 @Override
                 public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
                     try {
@@ -43,10 +54,24 @@ public class THttpTemplate {
                     }
                 }
             });
-            return x;
+            return t;
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException
                 | InvocationTargetException e) {
             throw new RuntimeException("fail to create proxy.", e);
         }
     }
+
+    @Override
+    public RequestSpecificRetryHandler getRequestSpecificRetryHandler(THttpRequest request, IClientConfig requestConfig) {
+        return null;
+    }
+
+    @Override
+    public THttpResponse execute(THttpRequest request, IClientConfig requestConfig) throws Exception {
+        Class<T> clientType = request.gettClientType();
+        T iface = iface(clientType);
+        return new THttpResponse<>(iface);
+    }
+
+
 }
