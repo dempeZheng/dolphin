@@ -1,6 +1,7 @@
 package com.zhizus.forest.dolphin.configuration;
 
 import com.zhizus.forest.dolphin.annotation.ThriftService;
+import com.zhizus.forest.dolphin.utils.ProxyUtils;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -86,18 +87,22 @@ public class ThriftAutoConfiguration {
             for (String beanName : applicationContext.getBeanNamesForAnnotation(ThriftService.class)) {
                 ThriftService annotation = applicationContext.findAnnotationOnBean(beanName, ThriftService.class);
                 try {
-                    registerThriftHandler(servletContext, annotation.value(), applicationContext.getBean(beanName));
+                    Object bean = applicationContext.getBean(beanName);
+
+                    registerThriftHandler(servletContext, annotation.value(), bean);
                 } catch (BeansException | ClassNotFoundException
                         | NoSuchMethodException e) {
                     // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        protected void registerThriftHandler(ServletContext servletContext, String[] urls, Object handler) throws ClassNotFoundException, NoSuchMethodException {
-            Class<?>[] handlerInterfaces = handler.getClass().getInterfaces();
-
+        protected void registerThriftHandler(ServletContext servletContext, String[] urls, Object handler) throws Exception {
+            Object target = ProxyUtils.getTarget(handler);
+            Class<?>[] handlerInterfaces = target.getClass().getInterfaces();
             Class<?> ifaceClass = null;
             Class<TProcessor> processorClass = null;
             Class<?> serviceClass = null;
