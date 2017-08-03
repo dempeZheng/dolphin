@@ -19,7 +19,6 @@ public class Application implements CommandLineRunner {
 
     public static void main(String[] args) throws TException {
         SpringApplication app = new SpringApplication(Application.class);
-        app.setWebEnvironment(false);
         app.run(args);
 
     }
