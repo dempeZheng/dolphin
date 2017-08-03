@@ -18,11 +18,8 @@ import javax.servlet.ServletException;
 @ConditionalOnWebApplication
 public class AutoConfiguration implements ServletContextInitializer{
 
-
-
 	@Bean
 	public ThriftProviderAspect aspectThriftProvider(){
-
 		return new ThriftProviderAspect();
 	}
 
