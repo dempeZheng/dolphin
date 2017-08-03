@@ -36,6 +36,7 @@ public class THttpLoadBalanceClient extends TTransport {
 
     private URL selectURL() {
         Server aDefault = iLoadBalancer.chooseServer("default");
+
         try {
             return new URL("");
         } catch (MalformedURLException e) {
@@ -110,6 +111,8 @@ public class THttpLoadBalanceClient extends TTransport {
     }
 
     public void flush() throws TTransportException {
+
+        // set callback
 
         byte[] data = this.requestBuffer_.toByteArray();
         this.requestBuffer_.reset();

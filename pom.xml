@@ -28,6 +28,7 @@
         <netty.version>5.0.0.Alpha1</netty.version>
         <netty.groupId>io.netty</netty.groupId>
         <java.source.jdk>1.8</java.source.jdk>
+        <javassist.version>3.18.0-GA</javassist.version>
     </properties>
 
     <name>dolphin</name>
