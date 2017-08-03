@@ -3,6 +3,11 @@
 
 
 
+## future
+- 支持thrift序列化的http协议
+- 支持原生thrift协议
+
+
 ## todo
 
 - Client support LoadBalance
