@@ -19,6 +19,7 @@ public class THttpResponse<T extends TServiceClient> implements IResponse{
         this.client = client;
     }
 
+
     public THttpResponse setClient(T client) {
         this.client = client;
         return this;
@@ -26,7 +27,7 @@ public class THttpResponse<T extends TServiceClient> implements IResponse{
 
     @Override
     public Object getPayload() throws ClientException {
-        return null;
+        return client;
     }
 
     @Override

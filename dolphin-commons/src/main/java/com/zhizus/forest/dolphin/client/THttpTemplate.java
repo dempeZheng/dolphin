@@ -17,6 +17,7 @@ import org.apache.thrift.transport.TTransport;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 
 /**
  * Created by dempezheng on 2017/8/3.
@@ -26,7 +27,6 @@ public class THttpTemplate<T extends TServiceClient> extends AbstractLoadBalance
     public THttpTemplate(ILoadBalancer lb) {
         super(lb);
     }
-
 
     public T iface(Class<T> ifaceClass) throws Exception {
         final TTransport transport = null;
@@ -47,7 +47,6 @@ public class THttpTemplate<T extends TServiceClient> extends AbstractLoadBalance
                     try {
                         Object result = proceed.invoke(self, args);
                         //统计调用次数
-
                         return result;
                     } finally {
 
@@ -68,9 +67,18 @@ public class THttpTemplate<T extends TServiceClient> extends AbstractLoadBalance
 
     @Override
     public THttpResponse execute(THttpRequest request, IClientConfig requestConfig) throws Exception {
-        Class<T> clientType = request.gettClientType();
-        T iface = iface(clientType);
+        Class<T> entityClass =getGenericParadigmType();
+        T iface = iface(entityClass);
         return new THttpResponse<>(iface);
+    }
+
+    public T getTClient() throws Exception {
+        THttpResponse execute = execute(null, null);
+        return (T) execute.getPayload();
+    }
+
+    private Class<T> getGenericParadigmType(){
+        return  (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
 
