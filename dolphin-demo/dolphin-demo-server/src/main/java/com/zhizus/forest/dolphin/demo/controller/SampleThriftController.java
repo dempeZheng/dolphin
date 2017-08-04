@@ -7,8 +7,6 @@ import com.zhizus.forest.dolphin.gen.Sample;
 import com.zhizus.forest.dolphin.server.ProcessorFactory;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
-import org.springframework.aop.framework.AopContext;
-import org.springframework.context.annotation.Bean;
 
 /**
  * Created by dempezheng on 2017/8/4.
@@ -31,6 +29,6 @@ public class SampleThriftController implements ProcessorFactory, Sample.Iface {
 
 
     public TProcessor getProcessor(Object bean) {
-        return new Sample.Processor<SampleThriftController>((SampleThriftController) bean);
+        return new Sample.Processor<>((SampleThriftController) bean);
     }
 }
