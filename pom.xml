@@ -93,6 +93,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.leangen.geantyref</groupId>
+            <artifactId>geantyref</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+
     </dependencies>
 
 

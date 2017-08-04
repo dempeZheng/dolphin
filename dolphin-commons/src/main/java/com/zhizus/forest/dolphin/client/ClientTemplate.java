@@ -7,4 +7,6 @@ public interface ClientTemplate<T> {
 
     T newClient() throws Exception;
 
+    T newClient(Class<T> aClass) throws Exception;
+
 }

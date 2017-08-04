@@ -2,12 +2,19 @@ package com.zhizus.forest.dolphin.hystrix;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.zhizus.forest.dolphin.annotation.Inject;
+import com.zhizus.forest.dolphin.client.AbstractTemplate;
 import com.zhizus.forest.dolphin.client.THttpTemplate;
-import com.zhizus.forest.dolphin.client.THttpTemplateTmp;
 import com.zhizus.forest.dolphin.gen.Sample;
+import io.leangen.geantyref.GenericTypeReflector;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * Created by dempezheng on 2017/8/3.
@@ -20,14 +27,24 @@ public class SampleClientCommand implements Sample.Iface {
     Sample.Client client;
 
     @Autowired
-    THttpTemplate<Sample.Client> tHttpTemplate;
+    THttpTemplate<Sample.Client> template;
+
+    @Bean
+    public THttpTemplate<Sample.Client> initSampleClient() {
+        THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-demo", new SpringClientFactory());
+        template.setType(Sample.Client.class);
+        return template;
+
+    }
 
 
     @HystrixCommand(fallbackMethod = "helloFallback")
     public String hello(String para) throws TException {
+
+
         Sample.Client tClient = null;
         try {
-            tClient = tHttpTemplate.newClient();
+            tClient = template.newClient();
         } catch (Exception e) {
             e.printStackTrace();
         }

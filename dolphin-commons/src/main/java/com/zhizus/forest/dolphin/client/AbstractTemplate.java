@@ -1,23 +1,43 @@
 package com.zhizus.forest.dolphin.client;
 
-import com.netflix.client.ClientFactory;
-import com.netflix.client.IClient;
-import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpRequest;
-import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpResponse;
+import org.apache.thrift.TServiceClient;
 
 /**
  * Created by dempezheng on 2017/8/4.
  */
-public abstract class AbstractTemplate<T> implements ClientTemplate<T> {
+public abstract class AbstractTemplate<T extends TServiceClient> implements ClientTemplate<T> {
 
-    private IClient<THttpRequest<T>, THttpResponse> iClient;
+    private String serviceName;
+    public ThriftClientFactory<T> iClient;
 
-    public AbstractTemplate(String name) {
-        this.iClient = ClientFactory.getNamedClient(name);
+    private Class<T> type;
+
+    public Class<T> getType() {
+        return type;
     }
+
+    public void setType(Class<T> type) {
+        this.type = type;
+    }
+
+
+    public AbstractTemplate(String serviceName) {
+        this.serviceName = serviceName;
+
+    }
+
+    public AbstractTemplate(ThriftClientFactory<T> iClient) {
+        this.iClient = iClient;
+    }
+
 
     @Override
     public T newClient() throws Exception {
-        return (T) iClient.execute(null, null).getPayload();
+        return newClient(getType());
+    }
+
+    @Override
+    public T newClient(Class<T> aClass) throws Exception {
+        return this.iClient.iface(aClass, "");
     }
 }

@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by dempezheng on 2017/8/3.
  */
-public class LoadBalanceTHttpServiceClient extends TTransport {
+public class THttpLoadBalanceServiceClient extends TTransport {
     private String serviceName = null;
     private final ByteArrayOutputStream requestBuffer_ = new ByteArrayOutputStream();
     private InputStream inputStream_ = null;
@@ -29,7 +29,7 @@ public class LoadBalanceTHttpServiceClient extends TTransport {
     private Map<String, String> customHeaders_ = null;
     private ILoadBalancer iLoadBalancer;
 
-    public LoadBalanceTHttpServiceClient(ILoadBalancer iLoadBalancer) {
+    public THttpLoadBalanceServiceClient(ILoadBalancer iLoadBalancer) {
         this.iLoadBalancer = iLoadBalancer;
 
     }
