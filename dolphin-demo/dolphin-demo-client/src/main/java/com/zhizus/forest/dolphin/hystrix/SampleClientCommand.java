@@ -22,8 +22,6 @@ public class SampleClientCommand implements Sample.Iface {
     THttpTemplate<Sample.Client> template;
 
 
-
-
     @HystrixCommand(fallbackMethod = "helloFallback")
     public String hello(String para) throws TException {
 

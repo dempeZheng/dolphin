@@ -40,6 +40,7 @@ public class ClientApplication implements CommandLineRunner {
         System.out.println(test);
 
     }
+
     private void runHystrixCommandHello() throws TException {
         String command = sampleClientCommand.hello("command");
         System.out.println(command);

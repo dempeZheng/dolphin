@@ -1,7 +1,6 @@
 package com.zhizus.forest.dolphin.client.ribbon.hthrift;
 
 import com.zhizus.forest.dolphin.client.AbstractTemplate;
-import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpClientFactory;
 import org.apache.thrift.TServiceClient;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 

@@ -26,7 +26,7 @@ public class SampleController implements Sample.Iface {
         return true;
     }
 
-    public String helloFallback(String para){
+    public String helloFallback(String para) {
         return "hello_fallback server";
     }
 }
