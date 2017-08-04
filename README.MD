@@ -11,5 +11,6 @@
 
 ## todo
 
+- thrift原生server
 - Client support eureka
 - RxJava封装异步Thrift Client
