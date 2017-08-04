@@ -5,10 +5,10 @@ import org.apache.thrift.TServiceClient;
 /**
  * Created by dempezheng on 2017/8/4.
  */
-public abstract class AbstractTemplate<T extends TServiceClient> implements ClientTemplate<T> {
+public abstract class AbstractTemplate<T extends TServiceClient> implements ClientOptions<T> {
 
     private String serviceName;
-    public ThriftClientFactory<T> iClient;
+    public TClientFactory<T> iClient;
 
     private Class<T> type;
 
@@ -20,13 +20,12 @@ public abstract class AbstractTemplate<T extends TServiceClient> implements Clie
         this.type = type;
     }
 
-
-    public AbstractTemplate(String serviceName) {
+    public AbstractTemplate(String serviceName, Class<T> type) {
         this.serviceName = serviceName;
-
+        this.type = type;
     }
 
-    public AbstractTemplate(ThriftClientFactory<T> iClient) {
+    public AbstractTemplate(TClientFactory<T> iClient) {
         this.iClient = iClient;
     }
 

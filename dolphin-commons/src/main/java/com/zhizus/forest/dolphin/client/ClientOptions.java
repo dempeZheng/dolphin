@@ -3,7 +3,7 @@ package com.zhizus.forest.dolphin.client;
 /**
  * Created by dempezheng on 2017/8/4.
  */
-public interface ClientTemplate<T> {
+public interface ClientOptions<T> {
 
     T newClient() throws Exception;
 

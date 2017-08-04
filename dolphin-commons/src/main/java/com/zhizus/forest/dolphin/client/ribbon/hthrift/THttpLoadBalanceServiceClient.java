@@ -21,7 +21,6 @@ import java.util.Map;
  * Created by dempezheng on 2017/8/3.
  */
 public class THttpLoadBalanceServiceClient extends TTransport {
-    private String serviceName = null;
     private final ByteArrayOutputStream requestBuffer_ = new ByteArrayOutputStream();
     private InputStream inputStream_ = null;
     private int connectTimeout_ = 0;

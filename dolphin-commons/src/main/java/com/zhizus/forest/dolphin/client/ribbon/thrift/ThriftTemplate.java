@@ -1,7 +1,6 @@
 package com.zhizus.forest.dolphin.client.ribbon.thrift;
 
 import com.zhizus.forest.dolphin.client.AbstractTemplate;
-import com.zhizus.forest.dolphin.client.ThriftClientFactory;
 import org.apache.thrift.TServiceClient;
 
 /**
@@ -10,7 +9,8 @@ import org.apache.thrift.TServiceClient;
 public class ThriftTemplate<T extends TServiceClient> extends AbstractTemplate<T> {
 
 
-    public ThriftTemplate(ThriftClientFactory<T> iClient) {
-        super(iClient);
+    public ThriftTemplate(String serviceName, Class<T> type) {
+        super(serviceName, type);
     }
+
 }

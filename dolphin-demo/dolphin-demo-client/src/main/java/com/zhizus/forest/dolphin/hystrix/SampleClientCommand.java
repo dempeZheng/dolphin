@@ -2,19 +2,11 @@ package com.zhizus.forest.dolphin.hystrix;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.zhizus.forest.dolphin.annotation.Inject;
-import com.zhizus.forest.dolphin.client.AbstractTemplate;
-import com.zhizus.forest.dolphin.client.THttpTemplate;
+import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpTemplate;
 import com.zhizus.forest.dolphin.gen.Sample;
-import io.leangen.geantyref.GenericTypeReflector;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * Created by dempezheng on 2017/8/3.
