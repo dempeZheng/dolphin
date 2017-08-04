@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -21,6 +22,7 @@ import java.util.Map;
  * Created by dempezheng on 2017/7/6.
  */
 @Aspect
+@Order(1)
 public class ThriftProviderAspect {
     private static final Logger logger = LoggerFactory.getLogger(ThriftProviderAspect.class);
 
