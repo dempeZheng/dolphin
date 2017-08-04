@@ -47,6 +47,7 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
                     return ((ProcessorFactory) bean).getProcessor();
                 }
             };
+
             server.setThriftServerName(thriftService.value()[0]);
             server.start();
 

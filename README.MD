@@ -10,7 +10,7 @@
 
 
 ## todo
-
+- thrift原生thrift 不支持aop
 - thrift原生server
 - Client support eureka
 - RxJava封装异步Thrift Client
