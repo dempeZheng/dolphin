@@ -1,6 +1,7 @@
 package com.zhizus.forest.dolphin;
 
 import com.zhizus.forest.dolphin.annotation.Inject;
+import com.zhizus.forest.dolphin.client.ribbon.thrift.ThriftTemplate;
 import com.zhizus.forest.dolphin.gen.Sample;
 import com.zhizus.forest.dolphin.hystrix.SampleClientCommand;
 import org.apache.thrift.TException;
@@ -24,6 +25,10 @@ public class ClientApplication implements CommandLineRunner {
     @Autowired
     SampleClientCommand sampleClientCommand;
 
+    @Autowired
+    ThriftTemplate<Sample.Client> thriftTemplate;
+
+
     public static void main(String[] args) throws TException {
         SpringApplication app = new SpringApplication(ClientApplication.class);
         app.run(args);
@@ -31,8 +36,11 @@ public class ClientApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        runHello();
-        runHystrixCommandHello();
+
+        String test = thriftTemplate.newClient().hello("test");
+        System.out.println(test);
+//        runHello();
+//        runHystrixCommandHello();
     }
 
     private void runHello() throws TException {

@@ -20,7 +20,11 @@ public class ThriftClientFactory<T extends TServiceClient> extends AbstractTClie
 
     @Override
     public TTransport makeTransport(Server server) throws TTransportException {
-        return new TFramedTransport(new TSocket(server.getHost(), server.getPort()));
+        TSocket transport = new TSocket(server.getHost(), server.getPort());
+        transport.setTimeout(5000);
+        TFramedTransport tFramedTransport = new TFramedTransport(transport);
+        tFramedTransport.open();
+        return tFramedTransport;
     }
 
 }

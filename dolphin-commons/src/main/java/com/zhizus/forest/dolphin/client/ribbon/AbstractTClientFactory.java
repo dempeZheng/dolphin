@@ -6,6 +6,7 @@ import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.zhizus.forest.dolphin.client.TClientFactory;
+import com.zhizus.forest.dolphin.utils.ThriftClientUtils;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
@@ -45,14 +46,15 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
         RibbonLoadBalancerContext context = this.clientFactory
                 .getLoadBalancerContext(serviceName);
         RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
-        final TTransport transport = new TFramedTransport(new TSocket(server.getHost(), server.getPort()));
+        final TTransport transport = makeTransport(server);
+
         // 代理
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(ifaceClass);
         factory.setFilter(new MethodFilter() {
             @Override
             public boolean isHandled(Method m) {
-                return true;
+                return ThriftClientUtils.getInterfaceMethodNames(ifaceClass).contains(m.getName());
             }
         });
         try {
@@ -69,6 +71,8 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
                         statsRecorder.recordStats(ex);
                         ReflectionUtils.rethrowRuntimeException(ex);
                     } finally {
+
+                        transport.close();
 
                     }
                     return null;
@@ -93,7 +97,7 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
             return null;
         }
         List<Server> listServer = Lists.newArrayList();
-        Server server = new Server("localhost", 8080);
+        Server server = new Server("localhost", 9001);
         listServer.add(server);
         loadBalancer.addServers(listServer);
         return loadBalancer.chooseServer("default"); // TODO: better handling of key

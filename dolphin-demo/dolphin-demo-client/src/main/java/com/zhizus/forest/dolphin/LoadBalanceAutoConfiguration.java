@@ -4,6 +4,7 @@ import com.netflix.client.IClient;
 import com.netflix.client.http.HttpRequest;
 import com.netflix.ribbon.Ribbon;
 import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpTemplate;
+import com.zhizus.forest.dolphin.client.ribbon.thrift.ThriftTemplate;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -53,6 +54,12 @@ public class LoadBalanceAutoConfiguration {
     @Bean
     public THttpTemplate<Sample.Client> initSampleClient() {
         THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-client", Sample.Client.class,
+                springClientFactory());
+        return template;
+    }
+    @Bean
+    public ThriftTemplate<Sample.Client> initThriftClient() {
+        ThriftTemplate<Sample.Client> template = new ThriftTemplate<Sample.Client>("dolphin-client-2", Sample.Client.class,
                 springClientFactory());
         return template;
 
