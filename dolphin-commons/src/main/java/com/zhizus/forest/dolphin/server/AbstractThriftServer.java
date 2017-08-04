@@ -32,7 +32,7 @@ public abstract class AbstractThriftServer {
     private TThreadPoolServer server;
 
     private final static int DEF_FRAME_SIZE = 16777216;
-    private final static String DEF_SERVER_NAME = "forest_thrift_server";
+    private  String thriftServerName = "forest_thrift_server";
 
     public void start() {
 
@@ -104,7 +104,12 @@ public abstract class AbstractThriftServer {
     }
 
     public String getServerName() {
-        return DEF_SERVER_NAME;
+        return thriftServerName;
+    }
+
+    public AbstractThriftServer setThriftServerName(String thriftServerName) {
+        this.thriftServerName = thriftServerName;
+        return this;
     }
 
     public abstract int getPort();

@@ -36,7 +36,7 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
                 return;
 
             }
-            new AbstractThriftServer() {
+            AbstractThriftServer server = new AbstractThriftServer() {
                 @Override
                 public int getPort() {
                     return thriftService.port();
@@ -46,7 +46,9 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
                 public TProcessor getProcessor() {
                     return ((ProcessorFactory) bean).getProcessor();
                 }
-            }.start();
+            };
+            server.setThriftServerName(thriftService.value()[0]);
+            server.start();
 
 
         }
