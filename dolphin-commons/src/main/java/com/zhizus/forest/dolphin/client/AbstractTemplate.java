@@ -38,6 +38,6 @@ public abstract class AbstractTemplate<T extends TServiceClient> implements Clie
 
     @Override
     public T newClient(Class<T> aClass) throws Exception {
-        return this.iClient.iface(aClass, "");
+        return this.iClient.iface(aClass, serviceName);
     }
 }

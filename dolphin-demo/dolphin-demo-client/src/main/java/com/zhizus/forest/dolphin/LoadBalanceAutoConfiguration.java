@@ -1,8 +1,10 @@
-package com.zhizus.forest.dolphin.configuration;
+package com.zhizus.forest.dolphin;
 
 import com.netflix.client.IClient;
 import com.netflix.client.http.HttpRequest;
 import com.netflix.ribbon.Ribbon;
+import com.zhizus.forest.dolphin.client.THttpTemplate;
+import com.zhizus.forest.dolphin.gen.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -25,7 +27,7 @@ import java.util.List;
  * Created by dempezheng on 2017/8/3.
  */
 @Configuration
-@ConditionalOnClass({ IClient.class, RestTemplate.class })
+@ConditionalOnClass({ IClient.class, THttpTemplate.class })
 @RibbonClients
 @AutoConfigureAfter(name = "org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration")
 @AutoConfigureBefore(LoadBalancerAutoConfiguration.class)
@@ -46,10 +48,14 @@ public class LoadBalanceAutoConfiguration {
         return factory;
     }
 
+
     @Bean
-    @ConditionalOnMissingBean(LoadBalancerClient.class)
-    public LoadBalancerClient loadBalancerClient() {
-        return new RibbonLoadBalancerClient(springClientFactory());
+    public THttpTemplate<Sample.Client> initSampleClient() {
+        THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-client",springClientFactory());
+        template.setType(Sample.Client.class);
+
+        return template;
+
     }
 
     @Configuration

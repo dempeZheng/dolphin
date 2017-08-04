@@ -29,13 +29,7 @@ public class SampleClientCommand implements Sample.Iface {
     @Autowired
     THttpTemplate<Sample.Client> template;
 
-    @Bean
-    public THttpTemplate<Sample.Client> initSampleClient() {
-        THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-demo", new SpringClientFactory());
-        template.setType(Sample.Client.class);
-        return template;
 
-    }
 
 
     @HystrixCommand(fallbackMethod = "helloFallback")

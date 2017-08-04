@@ -1,5 +1,6 @@
 package com.zhizus.forest.dolphin.client.ribbon.hthrift;
 
+import com.google.common.collect.Lists;
 import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -20,6 +21,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 /**
  * Created by dempezheng on 2017/8/3.
@@ -42,7 +44,7 @@ public class THttpClientFactory<T extends TServiceClient> implements ThriftClien
         RibbonLoadBalancerContext context = this.clientFactory
                 .getLoadBalancerContext(serviceName);
         RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
-        final TTransport transport = new THttpClient("http://" + server.getHost() + ":" + server.getPort());
+        final TTransport transport = new THttpClient("http://" + server.getHost() + ":" + server.getPort()+"/sample");
         // 代理
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(ifaceClass);
@@ -91,6 +93,10 @@ public class THttpClientFactory<T extends TServiceClient> implements ThriftClien
         if (loadBalancer == null) {
             return null;
         }
+        List<Server> listServer = Lists.newArrayList();
+        Server server= new Server("localhost",8080);
+        listServer.add(server);
+        loadBalancer.addServers(listServer);
         return loadBalancer.chooseServer("default"); // TODO: better handling of key
     }
 
