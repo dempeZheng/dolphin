@@ -1,4 +1,4 @@
-package com.zhizus.forest.dolphin.client;
+package com.zhizus.forest.dolphin.client.ribbon.hthrift;
 
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;

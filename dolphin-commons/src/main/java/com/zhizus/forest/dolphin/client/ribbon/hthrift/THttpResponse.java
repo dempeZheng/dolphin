@@ -1,4 +1,4 @@
-package com.zhizus.forest.dolphin.ribbon.hthrift;
+package com.zhizus.forest.dolphin.client.ribbon.hthrift;
 
 import com.netflix.client.ClientException;
 import com.netflix.client.IResponse;
