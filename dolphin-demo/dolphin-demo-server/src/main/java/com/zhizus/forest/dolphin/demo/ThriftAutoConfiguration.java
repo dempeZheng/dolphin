@@ -1,6 +1,8 @@
-package com.zhizus.forest.dolphin.configuration;
+package com.zhizus.forest.dolphin.demo;
 
 import com.zhizus.forest.dolphin.annotation.ThriftService;
+import com.zhizus.forest.dolphin.demo.controller.SampleThriftController;
+import com.zhizus.forest.dolphin.gen.Sample;
 import com.zhizus.forest.dolphin.server.AbstractThriftServer;
 import com.zhizus.forest.dolphin.server.ProcessorFactory;
 import org.apache.thrift.TProcessor;
@@ -44,7 +46,8 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
 
                 @Override
                 public TProcessor getProcessor() {
-                    return ((ProcessorFactory) bean).getProcessor();
+                    TProcessor processor = ((ProcessorFactory) bean).getProcessor(bean);
+                    return processor;
                 }
             };
 

@@ -25,7 +25,7 @@ public class SampleThriftController2 implements ProcessorFactory, Sample.Iface {
     }
 
     @Override
-    public TProcessor getProcessor() {
+    public TProcessor getProcessor(Object bean) {
         return new Sample.Processor<SampleThriftController2>(this);
     }
 }

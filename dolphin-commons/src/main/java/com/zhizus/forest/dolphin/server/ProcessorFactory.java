@@ -7,5 +7,5 @@ import org.apache.thrift.TProcessor;
  */
 public interface ProcessorFactory {
 
-     TProcessor getProcessor();
+     TProcessor getProcessor(Object iface);
 }
