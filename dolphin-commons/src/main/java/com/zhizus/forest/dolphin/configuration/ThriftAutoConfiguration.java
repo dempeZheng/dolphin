@@ -1,11 +1,11 @@
-package com.zhizus.forest.dolphin.demo;
+package com.zhizus.forest.dolphin.configuration;
 
 import com.zhizus.forest.dolphin.annotation.ThriftService;
-import com.zhizus.forest.dolphin.demo.controller.SampleThriftController;
-import com.zhizus.forest.dolphin.gen.Sample;
 import com.zhizus.forest.dolphin.server.AbstractThriftServer;
-import com.zhizus.forest.dolphin.server.ProcessorFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TProcessor;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -13,6 +13,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
+
+import java.lang.reflect.Constructor;
 
 /**
  * Created by dempezheng on 2017/8/4.
@@ -34,10 +36,22 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
         for (String beanName : beanNamesForAnnotation) {
             ThriftService thriftService = context.findAnnotationOnBean(beanName, ThriftService.class);
             Object bean = context.getBean(beanName);
-            if (!(bean instanceof ProcessorFactory)) {
-                return;
-
+            if (bean == null) {
+                continue;
             }
+
+            Class<? extends TBaseProcessor> aClass = thriftService.processorType();
+            Class<?> targetClass = AopUtils.getTargetClass(bean);
+            Class<?>[] interfaces = targetClass.getInterfaces();
+            Class<?> paramType = getConstructorPramType(interfaces);
+            if (paramType == null) {
+                //
+                continue;
+            }
+            Class[] parameterTypes = {paramType};
+            Constructor<? extends TBaseProcessor> constructor1 = aClass.getConstructor(parameterTypes);
+            TBaseProcessor processor = constructor1.newInstance(bean);
+
             AbstractThriftServer server = new AbstractThriftServer() {
                 @Override
                 public int getPort() {
@@ -46,15 +60,31 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
 
                 @Override
                 public TProcessor getProcessor() {
-                    TProcessor processor = ((ProcessorFactory) bean).getProcessor(bean);
+
                     return processor;
                 }
             };
+
 
             server.setThriftServerName(thriftService.value()[0]);
             server.start();
 
 
         }
+    }
+
+    private Class<?> getConstructorPramType(Class<?>[] interfaces) {
+        if (interfaces == null || interfaces.length == 0) {
+            return null;
+        }
+        if (interfaces.length == 1) {
+            return interfaces[0];
+        }
+        for (Class<?> anInterface : interfaces) {
+            if (StringUtils.endsWith(anInterface.getName(), "$Iface")) {
+                return anInterface;
+            }
+        }
+        return null;
     }
 }

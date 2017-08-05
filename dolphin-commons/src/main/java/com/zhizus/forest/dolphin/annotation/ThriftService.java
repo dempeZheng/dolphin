@@ -1,5 +1,6 @@
 package com.zhizus.forest.dolphin.annotation;
 
+import org.apache.thrift.TBaseProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Documented;
@@ -17,4 +18,6 @@ public @interface ThriftService {
     String[] value() default {};
 
     int port() default 9000;
+
+    Class<? extends TBaseProcessor> processorType();
 }

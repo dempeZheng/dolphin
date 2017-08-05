@@ -4,15 +4,13 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.zhizus.forest.dolphin.annotation.ThriftMethodProvider;
 import com.zhizus.forest.dolphin.annotation.ThriftService;
 import com.zhizus.forest.dolphin.gen.Sample;
-import com.zhizus.forest.dolphin.server.ProcessorFactory;
 import org.apache.thrift.TException;
-import org.apache.thrift.TProcessor;
 
 /**
  * Created by dempezheng on 2017/8/4.
  */
-@ThriftService(value = "thriftSample", port = 9001)
-public class SampleThriftController implements ProcessorFactory, Sample.Iface {
+@ThriftService(value = "thriftSample", port = 9001, processorType = Sample.Processor.class)
+public class SampleThriftController implements Sample.Iface {
 
     @HystrixCommand
     @ThriftMethodProvider
@@ -27,8 +25,4 @@ public class SampleThriftController implements ProcessorFactory, Sample.Iface {
         return true;
     }
 
-
-    public TProcessor getProcessor(Object bean) {
-        return new Sample.Processor<>((SampleThriftController) bean);
-    }
 }
