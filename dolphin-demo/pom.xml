@@ -15,14 +15,11 @@
         <module>dolphin-demo-server</module>
         <module>dolphin-demo-client</module>
         <module>dolphin-demo-api</module>
+        <module>dolphin-demo-eureka</module>
     </modules>
 
     <dependencies>
-        <dependency>
-            <groupId>com.zhizus.forest</groupId>
-            <artifactId>dolphin-commons</artifactId>
-            <version>1.0.2</version>
-        </dependency>
+
     </dependencies>
 
     <build>

@@ -15,6 +15,12 @@
 
         <dependency>
             <groupId>com.zhizus.forest</groupId>
+            <artifactId>dolphin-commons</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zhizus.forest</groupId>
             <artifactId>dolphin-demo-api</artifactId>
             <version>1.0.2</version>
         </dependency>
