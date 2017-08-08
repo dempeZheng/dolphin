@@ -31,7 +31,6 @@ public abstract class AbstractThriftServer {
     private ExecutorService servingExecutor;
     private TThreadPoolServer server;
 
-    private final static int DEF_FRAME_SIZE = 16777216;
     private  String thriftServerName = "forest_thrift_server";
 
     public void start() {
@@ -45,10 +44,10 @@ public abstract class AbstractThriftServer {
         }
 
         // Protocol factory
-        TProtocolFactory protocolFactory = new TBinaryProtocol.Factory(true, true, getFramedSize(),getFramedSize());
+        TProtocolFactory protocolFactory = new TBinaryProtocol.Factory(true, true);
 
-        TTransportFactory inTransportFactory = new TFramedTransport.Factory(getFramedSize());
-        TTransportFactory outTransportFactory = new TFramedTransport.Factory(getFramedSize());
+        TTransportFactory inTransportFactory = new TFramedTransport.Factory();
+        TTransportFactory outTransportFactory = new TFramedTransport.Factory();
 
         final TProcessor processor = getProcessor();
 
@@ -113,10 +112,6 @@ public abstract class AbstractThriftServer {
     }
 
     public abstract int getPort();
-
-    public int getFramedSize() {
-        return DEF_FRAME_SIZE;
-    }
 
     public abstract TProcessor getProcessor();
 
