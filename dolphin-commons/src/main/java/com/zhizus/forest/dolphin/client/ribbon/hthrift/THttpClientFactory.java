@@ -1,6 +1,7 @@
 package com.zhizus.forest.dolphin.client.ribbon.hthrift;
 
 import com.netflix.loadbalancer.Server;
+import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import com.zhizus.forest.dolphin.client.ribbon.AbstractTClientFactory;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.THttpClient;
@@ -20,6 +21,8 @@ public class THttpClientFactory<T extends TServiceClient> extends AbstractTClien
 
     @Override
     public TTransport makeTransport(Server server) throws TTransportException {
-        return new THttpClient("http://" + server.getHost() + ":" + server.getPort() + "/sample");
+        DiscoveryEnabledServer discoveryEnabledServer = (DiscoveryEnabledServer) server;
+        String url = "http://" + discoveryEnabledServer.getInstanceInfo().getIPAddr() + ":" + server.getPort() + "/sample";
+        return new THttpClient(url);
     }
 }

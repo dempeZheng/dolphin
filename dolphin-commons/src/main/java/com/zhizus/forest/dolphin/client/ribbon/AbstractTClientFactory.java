@@ -1,6 +1,5 @@
 package com.zhizus.forest.dolphin.client.ribbon;
 
-import com.google.common.collect.Lists;
 import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -21,7 +20,6 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * Created by dempezheng on 2017/8/4.
@@ -94,10 +92,6 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
         if (loadBalancer == null) {
             return null;
         }
-        List<Server> listServer = Lists.newArrayList();
-        Server server = new Server("localhost", 9001);
-        listServer.add(server);
-        loadBalancer.addServers(listServer);
         return loadBalancer.chooseServer("default"); // TODO: better handling of key
     }
 

@@ -1,6 +1,7 @@
 package com.zhizus.forest.dolphin;
 
 import com.zhizus.forest.dolphin.annotation.Inject;
+import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpTemplate;
 import com.zhizus.forest.dolphin.client.ribbon.thrift.ThriftTemplate;
 import com.zhizus.forest.dolphin.gen.Sample;
 import com.zhizus.forest.dolphin.hystrix.SampleClientCommand;
@@ -27,7 +28,7 @@ public class ClientApplication implements CommandLineRunner {
 
 
     @Autowired
-    ThriftTemplate<Sample.Client> thriftTemplate;
+    THttpTemplate<Sample.Client> thriftTemplate;
 
 
     public static void main(String[] args) throws TException {
