@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 
 public abstract class AbstractThriftServer {
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThriftServer.class);
 
     private static final int threadNum = Math.max(1, Runtime.getRuntime().availableProcessors() * 2);

@@ -24,7 +24,6 @@ public class DolphinLoadBalanceAutoConfiguration {
     }
 
     @Bean
-    @LoadBalanced
     public ThriftTemplate<Sample.Client> initThriftClient(SpringClientFactory springClientFactory) {
         ThriftTemplate<Sample.Client> template = new ThriftTemplate<Sample.Client>("dolphin-server", Sample.Client.class,
                 springClientFactory);

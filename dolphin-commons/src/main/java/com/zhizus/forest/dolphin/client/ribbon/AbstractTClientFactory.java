@@ -67,7 +67,6 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
                         statsRecorder.recordStats(ex);
                         ReflectionUtils.rethrowRuntimeException(ex);
                     } finally {
-
                         transport.close();
 
                     }
