@@ -8,13 +8,16 @@ import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * Created by Dempe on 2017/7/1 0001.
  */
-//@SpringBootApplication
-//@EnableDiscoveryClient
-//@EnableCircuitBreaker
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableCircuitBreaker
 public class ClientApplication implements CommandLineRunner {
 
     @Inject("sampleClient")
