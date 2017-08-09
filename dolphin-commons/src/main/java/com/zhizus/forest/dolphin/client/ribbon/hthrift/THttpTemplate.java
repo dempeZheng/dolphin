@@ -9,8 +9,8 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
  */
 public class THttpTemplate<T extends TServiceClient> extends AbstractTemplate<T> {
 
-    public THttpTemplate(String name, Class<T> classType, SpringClientFactory clientFactory) {
+    public THttpTemplate(String name, String urlPath, Class<T> classType, SpringClientFactory clientFactory) {
         super(name, classType);
-        this.iClient = new THttpClientFactory<T>(clientFactory);
+        this.iClient = new THttpClientFactory<T>(urlPath,clientFactory);
     }
 }

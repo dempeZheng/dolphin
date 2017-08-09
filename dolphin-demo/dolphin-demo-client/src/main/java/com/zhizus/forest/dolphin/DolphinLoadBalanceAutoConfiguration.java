@@ -17,7 +17,8 @@ public class DolphinLoadBalanceAutoConfiguration {
 
     @Bean
     public THttpTemplate<Sample.Client> initSampleClient(SpringClientFactory springClientFactory) {
-        THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-server", Sample.Client.class,
+        THttpTemplate<Sample.Client> template = new THttpTemplate<Sample.Client>("dolphin-server",
+                "/sample", Sample.Client.class,
                 springClientFactory);
         return template;
     }

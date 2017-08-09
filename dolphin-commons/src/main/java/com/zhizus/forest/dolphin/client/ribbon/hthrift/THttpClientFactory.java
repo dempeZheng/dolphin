@@ -14,15 +14,17 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
  */
 public class THttpClientFactory<T extends TServiceClient> extends AbstractTClientFactory<T> {
 
+    private String urlPath;
 
-    public THttpClientFactory(SpringClientFactory clientFactory) {
+    public THttpClientFactory(String urlPath, SpringClientFactory clientFactory) {
         super(clientFactory);
+        this.urlPath = urlPath;
     }
 
     @Override
     public TTransport makeTransport(Server server) throws TTransportException {
         DiscoveryEnabledServer discoveryEnabledServer = (DiscoveryEnabledServer) server;
-        String url = "http://" + discoveryEnabledServer.getInstanceInfo().getIPAddr() + ":" + server.getPort() + "/sample";
+        String url = "http://" + discoveryEnabledServer.getInstanceInfo().getIPAddr() + ":" + server.getPort() + urlPath;
         return new THttpClient(url);
     }
 }
