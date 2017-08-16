@@ -1,6 +1,5 @@
 package com.zhizus.forest.dolphin;
 
-import com.zhizus.forest.dolphin.annotation.Inject;
 import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpTemplate;
 import com.zhizus.forest.dolphin.client.ribbon.thrift.ThriftTemplate;
 import com.zhizus.forest.dolphin.gen.Sample;
@@ -21,8 +20,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableCircuitBreaker
 public class ClientApplication implements CommandLineRunner {
 
-    @Inject("sampleClient")
-    Sample.Client client;
+
     @Autowired
     SampleClientCommand sampleClientCommand;
 
@@ -45,11 +43,6 @@ public class ClientApplication implements CommandLineRunner {
 //        runHystrixCommandHello();
     }
 
-    private void runHello() throws TException {
-        String test = client.hello("test");
-        System.out.println(test);
-
-    }
 
     private void runHystrixCommandHello() throws TException {
         String command = sampleClientCommand.hello("command");

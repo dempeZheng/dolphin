@@ -34,6 +34,7 @@ public abstract class AbstractTClientFactory<T extends TServiceClient> implement
 
     public T iface(Class<T> ifaceClass, String serviceName) throws Exception {
         ILoadBalancer loadBalancer = getLoadBalancer(serviceName);
+
         Server server = getServer(loadBalancer);
         if (server == null) {
             throw new IllegalStateException("No instances available for " + serviceName);

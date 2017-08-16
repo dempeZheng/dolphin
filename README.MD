@@ -15,5 +15,5 @@
 - 支持eureka的各种重试
 - 改造支持interceptor模式，支持负载均衡的client和非负载均衡的client
 - 支持fegin
-- 暂时没有办法支持一个进程注册多个服务
+- 优化配置
 - RxJava封装异步Thrift Client

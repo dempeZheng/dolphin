@@ -33,6 +33,7 @@ public abstract class AbstractThriftServer {
 
     public void start() {
 
+
         LOGGER.info("Starting Thrift Server, bind to {}", getPort());
 
         try {

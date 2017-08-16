@@ -65,10 +65,8 @@ public class ThriftAutoConfiguration implements ApplicationContextAware, Initial
                 }
             };
 
-
             server.setThriftServerName(thriftService.value()[0]);
-            server.start();
-
+//            server.start();
 
         }
     }

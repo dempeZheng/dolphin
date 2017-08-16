@@ -1,7 +1,7 @@
 package com.zhizus.forest.dolphin;
 
 
-import com.zhizus.forest.dolphin.annotation.Inject;
+import com.zhizus.forest.dolphin.annotation.THttpInject;
 import com.zhizus.forest.dolphin.demo.ServerApplication;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
@@ -19,13 +19,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class HttpSampleTest {
 
-
-    @Inject
-    Sample.Client client;
+    @THttpInject(value = "tHttpClient", serverArr = {"localhost:9090"}, path = "/sample")
+    Sample.Client tHttpClient;
 
     @Test
     public void test2() throws TException {
-        String hello = client.hello("hello");
+        String hello = tHttpClient.hello("hello");
         System.out.println(hello);
     }
 
