@@ -9,6 +9,7 @@
 - 支持ribbon的ThriftTemplate
 - thrift原生server
 - 支持eureka的服务注册发现
+- 基于spring boot
 
 
 ## todo
@@ -17,3 +18,4 @@
 - 支持fegin
 - 优化配置
 - RxJava封装异步Thrift Client
+- 支持spring xml配置

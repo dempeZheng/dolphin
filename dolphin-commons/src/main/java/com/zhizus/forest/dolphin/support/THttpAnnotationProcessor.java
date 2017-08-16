@@ -2,11 +2,14 @@ package com.zhizus.forest.dolphin.support;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.netflix.http4.NFHttpClient;
+import com.netflix.http4.NFHttpClientFactory;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.client.thttp.DelegateLoadBalanceClient;
+import com.zhizus.forest.dolphin.client.thttp.THttpClient;
 import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.transport.THttpClient;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +81,11 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
                 }
                 //TODO这里后期加入负载均衡的实现
                 String url = "http://" + serverArr[0] + path;
-                tHttpClient = constructor.newInstance(new TBinaryProtocol(new THttpClient(url)));
+                NFHttpClient defaultClient = NFHttpClientFactory.getDefaultClient();
+                String serviceId = annotation.serviceName();
+                DelegateLoadBalanceClient delegateLoadBalanceClient = new DelegateLoadBalanceClient(null, defaultClient, serviceId);
+                THttpClient trans = new THttpClient(delegateLoadBalanceClient);
+                tHttpClient = constructor.newInstance(new TBinaryProtocol(trans));
             }
             ReflectionUtils.makeAccessible(field);
             ReflectionUtils.setField(field, bean, tHttpClient);
