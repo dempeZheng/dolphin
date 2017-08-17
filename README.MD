@@ -19,3 +19,4 @@
 - 优化配置
 - RxJava封装异步Thrift Client
 - 支持spring xml配置
+- 线程安全问题fix
