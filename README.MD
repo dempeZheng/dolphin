@@ -1,4 +1,4 @@
-#dolphin
+# dolphin
 >基于spring boot的微服务框架
 
 
@@ -19,4 +19,3 @@
 - 优化配置
 - RxJava封装异步Thrift Client
 - 支持spring xml配置
-- 线程安全问题fix
