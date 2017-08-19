@@ -3,7 +3,6 @@ package com.zhizus.forest.dolphin.support;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
-import com.zhizus.forest.dolphin.client.thttp.ThreadLocalTHttpClient;
 import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.TTransportException;
@@ -69,7 +68,6 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
                 tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation);
                 beanFactory.registerSingleton(beanName, tHttpClient);
             }
-
             if (tHttpClient != null) {
                 ReflectionUtils.makeAccessible(field);
                 field.set(bean, tHttpClient);

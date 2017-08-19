@@ -1,10 +1,12 @@
-package com.zhizus.forest.dolphin.client.thttp;
+package com.zhizus.forest.dolphin.support;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.netflix.http4.NFHttpClient;
 import com.netflix.http4.NFHttpClientFactory;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.client.thttp.DelegateLoadBalanceClient;
+import com.zhizus.forest.dolphin.client.thttp.THttpClient;
 import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import com.zhizus.forest.dolphin.utils.ThriftClientUtils;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -60,7 +62,7 @@ public class ThreadLocalTHttpClient {
 
     public static TBinaryProtocol makeProtocol(THttpInject annotation) throws NoSuchMethodException, DolphinFrameException, TTransportException {
         String path = annotation.path();
-        String[] serverArr = annotation.serverArr();
+        String[] serverArr = annotation.backupServers();
         if (serverArr.length < 1) {
             throw new DolphinFrameException();
         }

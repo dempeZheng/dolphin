@@ -1,7 +1,5 @@
 package com.zhizus.forest.dolphin.annotation;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.lang.annotation.*;
 
 /**
@@ -17,7 +15,7 @@ public @interface THttpInject {
 
     String serviceName() default "";
 
-    String[] serverArr() default {};
+    String[] backupServers() default {};
 
     String path() default "/";
 }

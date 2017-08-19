@@ -1,5 +1,6 @@
 package com.zhizus.forest.dolphin.client.thttp;
 
+import com.google.common.base.Strings;
 import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -55,11 +56,18 @@ public class DelegateLoadBalanceClient {
     }
 
     public HttpResponse execute(HttpPost post) throws IOException {
+
         return execute(serviceId, post);
     }
 
     public HttpResponse execute(String serviceId, HttpPost post) throws IOException {
-        ILoadBalancer loadBalancer = getLoadBalancer(serviceId);
+        ILoadBalancer loadBalancer;
+        if (Strings.isNullOrEmpty(serviceId)) {
+            String url = backupServers.get(0);
+            post.setURI(URI.create(url));
+            return client.execute(post);
+        }
+        loadBalancer = getLoadBalancer(serviceId);
         Server server = getServer(loadBalancer);
         String url = "";
         if (server != null) {
@@ -123,6 +131,7 @@ public class DelegateLoadBalanceClient {
     }
 
     protected ILoadBalancer getLoadBalancer(String serviceId) {
+
         return this.clientFactory.getLoadBalancer(serviceId);
     }
 
