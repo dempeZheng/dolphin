@@ -9,37 +9,56 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by dempezheng on 2017/8/16.
  */
-public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
+public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcessorAdapter implements BeanFactoryAware, PriorityOrdered {
     private final static Logger logger = LoggerFactory.getLogger(THttpAnnotationProcessor.class);
 
     private ConfigurableListableBeanFactory beanFactory;
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Class clazz = bean.getClass();
-        try {
-            processFields(bean, clazz.getDeclaredFields());
-        } catch (Exception e) {
-            logger.info(e.getMessage(), e);
-            throw new BeanCreationException(beanName, "inject tHttpClient err");
-        }
-        return bean;
+    public PropertyValues postProcessPropertyValues(
+            PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName)
+            throws BeansException {
+        Class<?> targetClass = bean.getClass();
+        do {
+            ReflectionUtils.doWithLocalFields(targetClass, new ReflectionUtils.FieldCallback() {
+                @Override
+                public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                    THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
+
+                    if (annotation != null) {
+                        System.out.println(field);
+                    }
+                    try {
+                        processFields(bean, field);
+                    } catch (Exception e) {
+                        logger.info(e.getMessage(), e);
+                        throw new BeanCreationException(beanName, "inject tHttpClient err");
+                    }
+
+                }
+            });
+            targetClass = targetClass.getSuperclass();
+        } while (targetClass != null && targetClass != Object.class);
+        return pvs;
     }
 
     @Override
@@ -47,31 +66,30 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
         return bean;
     }
 
-    private void processFields(Object bean, Field[] declaredFields) throws TTransportException, IllegalAccessException,
+    private void processFields(Object bean, Field field) throws TTransportException, IllegalAccessException,
             InvocationTargetException, InstantiationException, NoSuchMethodException, DolphinFrameException {
-        for (Field field : declaredFields) {
-            THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
-            if (annotation == null) {
-                continue;
-            }
-            Preconditions.checkArgument(TServiceClient.class.isAssignableFrom(field.getType()),
-                    "Invalid type: %s for field: %s, should be Config", field.getType(), field);
+        THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
+        if (annotation == null) {
+            return;
+        }
+        Preconditions.checkArgument(TServiceClient.class.isAssignableFrom(field.getType()),
+                "Invalid type: %s for field: %s, should be Config", field.getType(), field);
 
-            String beanName = annotation.value();
-            if (Strings.isNullOrEmpty(beanName)) {
-                beanName = field.getName();
-            }
-            Object tHttpClient = null;
-            if (beanFactory.containsBean(beanName)) {
-                tHttpClient = beanFactory.getBean(beanName);
-            } else {
-                tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation);
-                beanFactory.registerSingleton(beanName, tHttpClient);
-            }
-            if (tHttpClient != null) {
-                ReflectionUtils.makeAccessible(field);
-                field.set(bean, tHttpClient);
-            }
+        String beanName = annotation.value();
+        if (Strings.isNullOrEmpty(beanName)) {
+            beanName = field.getName();
+        }
+        Object tHttpClient = null;
+        if (beanFactory.containsBean(beanName)) {
+            tHttpClient = beanFactory.getBean(beanName);
+        } else {
+            SpringClientFactory springClientFactory = beanFactory.getBean(SpringClientFactory.class);
+            tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation, springClientFactory);
+            beanFactory.registerSingleton(beanName, tHttpClient);
+        }
+        if (tHttpClient != null) {
+            ReflectionUtils.makeAccessible(field);
+            field.set(bean, tHttpClient);
         }
     }
 
@@ -79,7 +97,7 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
     @Override
     public int getOrder() {
         //make it as late as possible
-        return Ordered.LOWEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE - 2;
     }
 
 

@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.zhizus.forest.dolphin.DolphinLoadBalanceAutoConfiguration
-
+com.zhizus.forest.dolphin.configuration.THttpAutoConfiguration

@@ -131,7 +131,6 @@ public class DelegateLoadBalanceClient {
     }
 
     protected ILoadBalancer getLoadBalancer(String serviceId) {
-
         return this.clientFactory.getLoadBalancer(serviceId);
     }
 

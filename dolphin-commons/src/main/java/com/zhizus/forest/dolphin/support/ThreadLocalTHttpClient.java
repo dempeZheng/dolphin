@@ -30,7 +30,7 @@ public class ThreadLocalTHttpClient {
 
     private static ThreadLocal<Map<Object, Object>> thriftClientthreadLocal = new ThreadLocal<Map<Object, Object>>();
 
-    public static Object  getOrMakeClient(Field field, THttpInject annotation, Object object) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public static Object getOrMakeClient(Field field, THttpInject annotation, Object object, SpringClientFactory springClientFactory) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InstantiationException, InvocationTargetException {
         Map<Object, Object> map = thriftClientthreadLocal.get();
 
         if (map == null) {
@@ -39,15 +39,15 @@ public class ThreadLocalTHttpClient {
         }
         Object client = map.get(object);
         if (client == null) {
-            client = newClient(field, annotation);
+            client = newClient(field, annotation, springClientFactory);
             map.putIfAbsent(object, client);
         }
         return client;
     }
 
 
-    public static Object newClient(Field field, THttpInject annotation) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        TBinaryProtocol tBinaryProtocol = makeProtocol(annotation);
+    public static Object newClient(Field field, THttpInject annotation, SpringClientFactory springClientFactory) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        TBinaryProtocol tBinaryProtocol = makeProtocol(annotation, springClientFactory);
         Class[] parameterTypes = {org.apache.thrift.protocol.TProtocol.class};
         Constructor constructor = field.getType().getConstructor(parameterTypes);
         Object client = constructor.newInstance(tBinaryProtocol);
@@ -55,12 +55,12 @@ public class ThreadLocalTHttpClient {
 
     }
 
-    public static Object newProxyClient(Field field, THttpInject annotation) throws NoSuchMethodException, DolphinFrameException, TTransportException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Object client = newClient(field, annotation);
-        return getProxyBean(field, annotation, client);
+    public static Object newProxyClient(Field field, THttpInject annotation, SpringClientFactory springClientFactory) throws NoSuchMethodException, DolphinFrameException, TTransportException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Object client = newClient(field, annotation, springClientFactory);
+        return getProxyBean(field, annotation, client, springClientFactory);
     }
 
-    public static TBinaryProtocol makeProtocol(THttpInject annotation) throws NoSuchMethodException, DolphinFrameException, TTransportException {
+    public static TBinaryProtocol makeProtocol(THttpInject annotation, SpringClientFactory springClientFactory) throws NoSuchMethodException, DolphinFrameException, TTransportException {
         String path = annotation.path();
         String[] serverArr = annotation.backupServers();
         if (serverArr.length < 1) {
@@ -73,13 +73,13 @@ public class ThreadLocalTHttpClient {
         }
         NFHttpClient defaultClient = NFHttpClientFactory.getDefaultClient();
         String serviceId = annotation.serviceName();
-        DelegateLoadBalanceClient delegateLoadBalanceClient = new DelegateLoadBalanceClient(new SpringClientFactory(), defaultClient, serviceId, path, backupServers);
+        DelegateLoadBalanceClient delegateLoadBalanceClient = new DelegateLoadBalanceClient(springClientFactory, defaultClient, serviceId, path, backupServers);
         THttpClient trans = new THttpClient(delegateLoadBalanceClient);
         return new TBinaryProtocol(trans);
 
     }
 
-    public static Object getProxyBean(Field field, THttpInject annotation, Object bean) {
+    public static Object getProxyBean(Field field, THttpInject annotation, Object bean, SpringClientFactory springClientFactory) {
         ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
         proxyFactory.setTarget(bean);
         proxyFactory.setProxyTargetClass(true);// ProxyFactoryBean要代理的不是接口类，
@@ -92,7 +92,7 @@ public class ThreadLocalTHttpClient {
                 if (interfaceMethodNames.contains(methodName)) {
                     return invocation.proceed();
                 }
-                Object orMakeClient = getOrMakeClient(field, annotation, bean);
+                Object orMakeClient = getOrMakeClient(field, annotation, bean, springClientFactory);
                 Object object = invocation.getMethod().invoke(orMakeClient, invocation.getArguments());
                 return object;
 

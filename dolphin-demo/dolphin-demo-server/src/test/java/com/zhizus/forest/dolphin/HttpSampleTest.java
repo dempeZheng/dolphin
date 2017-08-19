@@ -19,7 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class HttpSampleTest {
 
-    @THttpInject(backupServers = {"localhost:9090"}, path = "/sample")
+    @THttpInject(backupServers = {"localhost:9090"}, path = "/sample", serviceName = "dolphin-server")
     Sample.Client tHttpClient;
 
     @Test
