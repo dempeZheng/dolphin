@@ -6,24 +6,15 @@ import com.zhizus.forest.dolphin.annotation.THttpInject;
 import com.zhizus.forest.dolphin.client.thttp.ThreadLocalTHttpClient;
 import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.TypeConverter;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -31,13 +22,11 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Created by dempezheng on 2017/8/16.
  */
-public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered{
+public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
     private final static Logger logger = LoggerFactory.getLogger(THttpAnnotationProcessor.class);
 
     private ConfigurableListableBeanFactory beanFactory;
@@ -73,15 +62,15 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
             if (Strings.isNullOrEmpty(beanName)) {
                 beanName = field.getName();
             }
+           final String bName = beanName;
             Object tHttpClient = null;
             if (beanFactory.containsBean(beanName)) {
                 tHttpClient = beanFactory.getBean(beanName);
             } else {
 
-                tHttpClient = ThreadLocalTHttpClient.newClient(field, annotation);
-                beanFactory.registerSingleton(beanName, tHttpClient);
-//                beanFactory.registerSingleton(beanName,ThreadLocalTHttpClient.newProxyClient(field,annotation));
+                tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation);
             }
+
 
             if (tHttpClient != null) {
                 ReflectionUtils.makeAccessible(field);
@@ -89,8 +78,6 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
             }
         }
     }
-
-
 
 
     @Override

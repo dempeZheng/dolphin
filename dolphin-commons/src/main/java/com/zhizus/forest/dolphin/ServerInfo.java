@@ -11,6 +11,10 @@ public class ServerInfo {
     private String ip;
     private int port;
 
+    public ServerInfo(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }
@@ -63,5 +67,28 @@ public class ServerInfo {
     public ServerInfo setPort(int port) {
         this.port = port;
         return this;
+    }
+
+    public interface Iface {
+
+        String getName();
+
+    }
+
+    public static class Test implements Iface{
+        private String name;
+
+
+        public Test(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

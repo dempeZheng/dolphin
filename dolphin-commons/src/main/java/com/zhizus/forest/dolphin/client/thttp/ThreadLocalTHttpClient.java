@@ -80,6 +80,8 @@ public class ThreadLocalTHttpClient {
     public static Object getProxyBean(Field field, THttpInject annotation, Object bean) {
         ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
         proxyFactory.setTarget(bean);
+        proxyFactory.setProxyTargetClass(true);// ProxyFactoryBean要代理的不是接口类，
+        // 而是要使用CGLIB方式来进行代理,jdk代理类型对于thrift.client会有类型转换的问题
         proxyFactory.addAdvice(new MethodInterceptor() {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {

@@ -1,8 +1,8 @@
 package com.zhizus.forest.dolphin.demo.controller;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.zhizus.forest.dolphin.annotation.ThriftMethodProvider;
 import com.zhizus.forest.dolphin.annotation.THttpService;
+import com.zhizus.forest.dolphin.annotation.ThriftMethodProvider;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
 
