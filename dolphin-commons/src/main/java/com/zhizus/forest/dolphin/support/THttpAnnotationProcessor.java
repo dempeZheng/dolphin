@@ -62,15 +62,13 @@ public class THttpAnnotationProcessor implements BeanPostProcessor, BeanFactoryA
             if (Strings.isNullOrEmpty(beanName)) {
                 beanName = field.getName();
             }
-           final String bName = beanName;
             Object tHttpClient = null;
             if (beanFactory.containsBean(beanName)) {
                 tHttpClient = beanFactory.getBean(beanName);
             } else {
-
                 tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation);
+                beanFactory.registerSingleton(beanName, tHttpClient);
             }
-
 
             if (tHttpClient != null) {
                 ReflectionUtils.makeAccessible(field);

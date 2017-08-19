@@ -1,11 +1,6 @@
 package com.zhizus.forest.dolphin;
 
-import com.zhizus.forest.dolphin.client.ribbon.hthrift.THttpTemplate;
-import com.zhizus.forest.dolphin.client.ribbon.thrift.ThriftTemplate;
-import com.zhizus.forest.dolphin.gen.Sample;
-import com.zhizus.forest.dolphin.hystrix.SampleClientCommand;
 import org.apache.thrift.TException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,15 +15,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableCircuitBreaker
 public class ClientApplication implements CommandLineRunner {
 
-
-    @Autowired
-    SampleClientCommand sampleClientCommand;
-
-
-    @Autowired
-    THttpTemplate<Sample.Client> thriftTemplate;
-
-
     public static void main(String[] args) throws TException {
         SpringApplication app = new SpringApplication(ClientApplication.class);
         app.run(args);
@@ -36,16 +22,6 @@ public class ClientApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        String test = thriftTemplate.newClient().hello("test");
-        System.out.println(test);
-//        runHello();
-//        runHystrixCommandHello();
     }
 
-
-    private void runHystrixCommandHello() throws TException {
-        String command = sampleClientCommand.hello("command");
-        System.out.println(command);
-    }
 }

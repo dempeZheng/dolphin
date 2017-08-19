@@ -15,5 +15,5 @@ import java.lang.annotation.*;
 @Import(THttpInjectRegistrar.class)
 public @interface EnableTHttpInject {
 
-    int order() default Ordered.HIGHEST_PRECEDENCE;
+    int order() default Ordered.LOWEST_PRECEDENCE;
 }

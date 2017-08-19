@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.zhizus.forest.dolphin.configuration.THttpAutoConfiguration,\
-com.zhizus.forest.dolphin.configuration.AutoConfiguration,\
-com.zhizus.forest.dolphin.configuration.ThriftAutoConfiguration
