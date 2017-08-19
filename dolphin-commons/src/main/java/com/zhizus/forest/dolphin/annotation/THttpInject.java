@@ -1,5 +1,7 @@
 package com.zhizus.forest.dolphin.annotation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.lang.annotation.*;
 
 /**
@@ -8,6 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
+//@Autowired
 public @interface THttpInject {
 
     String value() default "";

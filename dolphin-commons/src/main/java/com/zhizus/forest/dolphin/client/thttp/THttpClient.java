@@ -23,7 +23,6 @@ import java.util.Map;
  * Created by dempezheng on 2017/8/16.
  */
 public class THttpClient extends TTransport {
-    private URL url_ = null;
     private final ByteArrayOutputStream requestBuffer_ = new ByteArrayOutputStream();
     private InputStream inputStream_ = null;
     private int connectTimeout_ = 0;
@@ -127,7 +126,7 @@ public class THttpClient extends TTransport {
             InputStream is = null;
 
             try {
-                post = new HttpPost(this.url_.getFile());
+                post = new HttpPost();
                 post.setHeader("Content-Type", "application/x-thrift");
                 post.setHeader("Accept", "application/x-thrift");
                 post.setHeader("User-Agent", "Java/THttpClient/HC");
@@ -188,70 +187,8 @@ public class THttpClient extends TTransport {
 
 
     public void flush() throws TTransportException {
-        if (null != this.client) {
             this.flushUsingHttpClient();
-        } else {
-            byte[] data = this.requestBuffer_.toByteArray();
-            this.requestBuffer_.reset();
 
-            try {
-                HttpURLConnection connection = (HttpURLConnection) this.url_.openConnection();
-                if (this.connectTimeout_ > 0) {
-                    connection.setConnectTimeout(this.connectTimeout_);
-                }
-
-                if (this.readTimeout_ > 0) {
-                    connection.setReadTimeout(this.readTimeout_);
-                }
-
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/x-thrift");
-                connection.setRequestProperty("Accept", "application/x-thrift");
-                connection.setRequestProperty("User-Agent", "Java/THttpClient");
-                if (this.customHeaders_ != null) {
-                    Iterator i$ = this.customHeaders_.entrySet().iterator();
-
-                    while (i$.hasNext()) {
-                        Map.Entry<String, String> header = (Map.Entry) i$.next();
-                        connection.setRequestProperty((String) header.getKey(), (String) header.getValue());
-                    }
-                }
-
-                connection.setDoOutput(true);
-                connection.connect();
-                connection.getOutputStream().write(data);
-                int responseCode = connection.getResponseCode();
-                if (responseCode != 200) {
-                    throw new TTransportException("HTTP Response code: " + responseCode);
-                } else {
-                    this.inputStream_ = connection.getInputStream();
-                }
-            } catch (IOException var5) {
-                throw new TTransportException(var5);
-            }
-        }
     }
 
-    public static class Factory extends TTransportFactory {
-        private final String url;
-        private final HttpClient client;
-
-        public Factory(String url) {
-            this.url = url;
-            this.client = null;
-        }
-
-        public Factory(String url, HttpClient client) {
-            this.url = url;
-            this.client = client;
-        }
-
-        public TTransport getTransport(TTransport trans) {
-            try {
-                return null != this.client ? new org.apache.thrift.transport.THttpClient(this.url, this.client) : new org.apache.thrift.transport.THttpClient(this.url);
-            } catch (TTransportException var3) {
-                return null;
-            }
-        }
-    }
 }

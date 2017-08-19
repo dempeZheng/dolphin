@@ -7,6 +7,7 @@ import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -19,13 +20,22 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class HttpSampleTest {
 
-    @THttpInject(value = "tHttpClient", serverArr = {"localhost:9090"}, path = "/sample")
+    @THttpInject(value = "tHttpClient", serverArr = {"localhost:9090"}, path = "/sample",serviceName = "dolphin-server")
     Sample.Client tHttpClient;
+
+    @Autowired
+    Sample.Client client;
 
     @Test
     public void test2() throws TException {
         String hello = tHttpClient.hello("hello");
         System.out.println(hello);
+        String hello2 = tHttpClient.hello("hello");
+        String hello3 = tHttpClient.hello("hello");
+
+        String test = client.hello("test");
+        System.out.println(test);
+
     }
 
 

@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,15 +26,17 @@ import java.util.Map;
 public class DelegateLoadBalanceClient {
 
     private HttpClient client;
-
     private SpringClientFactory clientFactory;
-
     private String serviceId;
+    private String path;
+    List<String> backupServers;
 
-    public DelegateLoadBalanceClient(SpringClientFactory clientFactory, HttpClient client, String serviceId) {
+    public DelegateLoadBalanceClient(SpringClientFactory clientFactory, HttpClient client, String serviceId, String path, List<String> backupServers) {
         this.clientFactory = clientFactory;
         this.client = client;
         this.serviceId = serviceId;
+        this.path = path;
+        this.backupServers = backupServers;
     }
 
 
@@ -58,11 +61,17 @@ public class DelegateLoadBalanceClient {
     public HttpResponse execute(String serviceId, HttpPost post) throws IOException {
         ILoadBalancer loadBalancer = getLoadBalancer(serviceId);
         Server server = getServer(loadBalancer);
-        if (server == null) {
+        String url = "";
+        if (server != null) {
+            RibbonServer ribbonServer = new RibbonServer(serviceId, server, isSecure(server,
+                    serviceId), serverIntrospector(serviceId).getMetadata(server));
+            url = "http://" + ribbonServer.getHost() + ":" + ribbonServer.getPort() + path;
+        } else if (backupServers.size() > 0) {
+            url = backupServers.get(0);
+        } else {
             throw new IllegalStateException("No instances available for " + serviceId);
         }
-        RibbonServer ribbonServer = new RibbonServer(serviceId, server, isSecure(server,
-                serviceId), serverIntrospector(serviceId).getMetadata(server));
+        post.setURI(URI.create(url));
 
         RibbonLoadBalancerContext context = this.clientFactory
                 .getLoadBalancerContext(serviceId);
