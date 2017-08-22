@@ -23,6 +23,32 @@
 
 ```
 
+3.example
+```java
+@EnableTHttpInject
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableCircuitBreaker
+public class ClientApplication implements CommandLineRunner {
+
+    @THttpInject(backupServers = {"localhost:9090"}, path = "/sample", serviceName = "dolphin-server")
+    Sample.Client tHttpClient;
+
+    public static void main(String[] args) throws TException {
+        SpringApplication app = new SpringApplication(ClientApplication.class);
+        app.run(args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println(tHttpClient.hello("test"));
+    }
+
+}
+
+
+```
+
 ## 
 ### client线程安全安全问题
 注入的client实际上是个代理类，真正的处理类已经通过threadlocal解决thrift client多线程的问题
