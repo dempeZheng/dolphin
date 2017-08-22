@@ -1,8 +1,9 @@
-package com.zhizus.forest.dolphin.support;
+package com.zhizus.forest.dolphin.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
 import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.TTransportException;
@@ -84,7 +85,8 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
             tHttpClient = beanFactory.getBean(beanName);
         } else {
             SpringClientFactory springClientFactory = beanFactory.getBean(SpringClientFactory.class);
-            tHttpClient = ThreadLocalTHttpClient.newProxyClient(field, annotation, springClientFactory);
+            TServiceProxyClientFactory factory = new TServiceProxyClientFactory(springClientFactory);
+            tHttpClient = factory.applyProxyClient(field, annotation);
             beanFactory.registerSingleton(beanName, tHttpClient);
         }
         if (tHttpClient != null) {

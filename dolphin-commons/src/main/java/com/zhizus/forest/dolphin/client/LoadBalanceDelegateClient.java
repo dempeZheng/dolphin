@@ -1,4 +1,4 @@
-package com.zhizus.forest.dolphin.client.thttp;
+package com.zhizus.forest.dolphin.client;
 
 import com.google.common.base.Strings;
 import com.netflix.client.config.CommonClientConfigKey;
@@ -11,9 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.netflix.ribbon.*;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +22,7 @@ import java.util.Map;
 /**
  * Created by dempezheng on 2017/8/16.
  */
-public class DelegateLoadBalanceClient {
+public class LoadBalanceDelegateClient {
 
     private HttpClient client;
     private SpringClientFactory clientFactory;
@@ -32,7 +30,7 @@ public class DelegateLoadBalanceClient {
     private String path;
     List<String> backupServers;
 
-    public DelegateLoadBalanceClient(SpringClientFactory clientFactory, HttpClient client, String serviceId, String path, List<String> backupServers) {
+    public LoadBalanceDelegateClient(SpringClientFactory clientFactory, HttpClient client, String serviceId, String path, List<String> backupServers) {
         this.clientFactory = clientFactory;
         this.client = client;
         this.serviceId = serviceId;
@@ -40,23 +38,11 @@ public class DelegateLoadBalanceClient {
         this.backupServers = backupServers;
     }
 
-
-    public URI reconstructURI(ServiceInstance instance, URI original) {
-        Assert.notNull(instance, "instance can not be null");
-        String serviceId = instance.getServiceId();
-        RibbonLoadBalancerContext context = this.clientFactory
-                .getLoadBalancerContext(serviceId);
-        Server server = new Server(instance.getHost(), instance.getPort());
-        boolean secure = isSecure(server, serviceId);
-        URI uri = original;
-        if (secure) {
-            uri = UriComponentsBuilder.fromUri(uri).scheme("https").build().toUri();
-        }
-        return context.reconstructURIWithServer(server, uri);
+    public HttpClient getClient() {
+        return client;
     }
 
     public HttpResponse execute(HttpPost post) throws IOException {
-
         return execute(serviceId, post);
     }
 
@@ -89,9 +75,7 @@ public class DelegateLoadBalanceClient {
             HttpResponse response = client.execute(post);
             statsRecorder.recordStats(response);
             return response;
-        }
-        // catch IOException and rethrow so RestTemplate behaves correctly
-        catch (IOException ex) {
+        } catch (IOException ex) {
             statsRecorder.recordStats(ex);
             throw ex;
         } catch (Exception ex) {
@@ -115,12 +99,7 @@ public class DelegateLoadBalanceClient {
         if (config != null) {
             return config.get(CommonClientConfigKey.IsSecure, false);
         }
-
         return serverIntrospector(serviceId).isSecure(server);
-    }
-
-    protected Server getServer(String serviceId) {
-        return getServer(getLoadBalancer(serviceId));
     }
 
     protected Server getServer(ILoadBalancer loadBalancer) {

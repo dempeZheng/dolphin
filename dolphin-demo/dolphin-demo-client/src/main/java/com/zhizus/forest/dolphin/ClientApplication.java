@@ -19,7 +19,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableCircuitBreaker
 public class ClientApplication implements CommandLineRunner {
 
-    @THttpInject(backupServers = {"localhost:9090"}, path = "/sample", serviceName = "dolphin-server")
+    @THttpInject(backupServers = {"localhost:9090"}, path = "/sample")
     Sample.Client tHttpClient;
 
     public static void main(String[] args) throws TException {

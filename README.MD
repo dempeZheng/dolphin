@@ -1,8 +1,6 @@
 # dolphin
 >基于spring boot支持thrift序列化的http的微服务框架
 
-
-
 ## future
 - 支持thrift序列化的http协议
 - 支持ribbon的ThriftTemplate
@@ -75,7 +73,7 @@ public class SampleController implements Sample.Iface {
 ```
 
 ## 
-### client线程安全安全问题
+### client线程安全问题
 注入的client实际上是个代理类，真正的处理类已经通过threadlocal解决thrift client多线程的问题
 
 ## todo

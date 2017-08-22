@@ -1,20 +1,16 @@
-package com.zhizus.forest.dolphin.client.thttp;
+package com.zhizus.forest.dolphin.client;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.apache.thrift.transport.TTransportFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,9 +24,9 @@ public class THttpClient extends TTransport {
     private int connectTimeout_ = 0;
     private int readTimeout_ = 0;
     private Map<String, String> customHeaders_ = null;
-    private final DelegateLoadBalanceClient client;
+    private final LoadBalanceDelegateClient client;
 
-    public THttpClient(DelegateLoadBalanceClient client) throws TTransportException {
+    public THttpClient(LoadBalanceDelegateClient client) throws TTransportException {
         this.client = client;
 
     }
@@ -38,7 +34,7 @@ public class THttpClient extends TTransport {
     public void setConnectTimeout(int timeout) {
         this.connectTimeout_ = timeout;
         if (null != this.client) {
-//            this.client.getParams().setParameter("http.connection.timeout", Integer.valueOf(this.connectTimeout_));
+            this.client.getClient().getParams().setParameter("http.connection.timeout", Integer.valueOf(this.connectTimeout_));
         }
 
     }
@@ -46,9 +42,8 @@ public class THttpClient extends TTransport {
     public void setReadTimeout(int timeout) {
         this.readTimeout_ = timeout;
         if (null != this.client) {
-//            this.client.getParams().setParameter("http.socket.timeout", Integer.valueOf(this.readTimeout_));
+            this.client.getClient().getParams().setParameter("http.socket.timeout", Integer.valueOf(this.readTimeout_));
         }
-
     }
 
     public void setCustomHeaders(Map<String, String> headers) {
@@ -59,7 +54,6 @@ public class THttpClient extends TTransport {
         if (this.customHeaders_ == null) {
             this.customHeaders_ = new HashMap();
         }
-
         this.customHeaders_.put(key, value);
     }
 
@@ -187,7 +181,7 @@ public class THttpClient extends TTransport {
 
 
     public void flush() throws TTransportException {
-            this.flushUsingHttpClient();
+        this.flushUsingHttpClient();
 
     }
 
