@@ -1,5 +1,5 @@
 # dolphin
->基于spring boot的微服务框架
+>基于spring boot支持thrift序列化的http的微服务框架
 
 
 
@@ -11,6 +11,7 @@
 
 
 ## quick start
+### client
 1.springboot启动时加上支持`EnableTHttpInject`注解
 ```java
 @EnableTHttpInject
@@ -45,7 +46,31 @@ public class ClientApplication implements CommandLineRunner {
     }
 
 }
+```
 
+### server
+加上`THttpService`注解，并实现对应的Iface接口
+框架会自动根据`THttpService`的value值为name注册对应的servlet
+
+```java
+@THttpService("/sample")
+public class SampleController implements Sample.Iface {
+
+    @HystrixCommand(fallbackMethod = "helloFallback")
+    @Override
+    public String hello(String para) throws TException {
+        throw new NullPointerException("");
+//        return "hello+"+para;
+    }
+
+    @Override
+    public boolean ping() throws TException {
+        return true;
+    }
+    public String helloFallback(String para) {
+        return "hello_fallback server";
+    }
+}
 
 ```
 
