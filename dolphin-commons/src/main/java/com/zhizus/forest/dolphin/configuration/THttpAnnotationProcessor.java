@@ -44,7 +44,6 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
                 @Override
                 public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                     THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
-
                     if (annotation != null) {
                         System.out.println(field);
                     }
@@ -60,11 +59,6 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
             targetClass = targetClass.getSuperclass();
         } while (targetClass != null && targetClass != Object.class);
         return pvs;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     private void processFields(Object bean, Field field) throws TTransportException, IllegalAccessException,
