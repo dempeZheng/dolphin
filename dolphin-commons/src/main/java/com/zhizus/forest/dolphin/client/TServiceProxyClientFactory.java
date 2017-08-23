@@ -6,6 +6,7 @@ import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import com.zhizus.forest.dolphin.utils.ThriftClientUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
@@ -27,7 +28,8 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
         super(factory);
     }
 
-    private Object getClient(Field field, THttpInject annotation, Object object) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InstantiationException, InvocationTargetException {
+
+    private Object getClient(TServiceBuilder builder, TServiceClient object) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InstantiationException, InvocationTargetException {
         Map<Object, Object> map = thriftClientThreadLocal.get();
         if (map == null) {
             map = Maps.newHashMap();
@@ -35,13 +37,13 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
         }
         Object client = map.get(object);
         if (client == null) {
-            client = newClient(field, annotation);
+            client = applyProxyClient(builder, object.getClass());
             map.putIfAbsent(object, client);
         }
         return client;
     }
 
-    private Object getProxyBean(Field field, THttpInject annotation, Object bean) {
+    private Object getProxyBean(TServiceBuilder builder, TServiceClient bean) {
         ProxyFactoryBean proxyFactory = new ProxyFactoryBean();
         proxyFactory.setTarget(bean);
         proxyFactory.setProxyTargetClass(true);// ProxyFactoryBean要代理的不是接口类，
@@ -50,11 +52,11 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
                 String methodName = invocation.getMethod().getName();
-                Set<String> interfaceMethodNames = ThriftClientUtils.getInterfaceMethodNames(field.getType());
+                Set<String> interfaceMethodNames = ThriftClientUtils.getInterfaceMethodNames(bean.getClass());
                 if (interfaceMethodNames.contains(methodName)) {
                     return invocation.proceed();
                 }
-                Object orMakeClient = getClient(field, annotation, bean);
+                Object orMakeClient = getClient(builder, bean);
                 Object object = invocation.getMethod().invoke(orMakeClient, invocation.getArguments());
                 return object;
             }
@@ -63,7 +65,16 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
     }
 
     public Object applyProxyClient(Field field, THttpInject annotation) throws NoSuchMethodException, TTransportException, InstantiationException, DolphinFrameException, IllegalAccessException, InvocationTargetException {
-        Object client = newClient(field, annotation);
-        return getProxyBean(field, annotation, client);
+        TServiceBuilder tServiceBuilder = new TServiceBuilder().withPath(annotation.path())
+                .withServiceId(annotation.serviceName())
+                .withBackupOfServerList(annotation.backupServers());
+        TServiceClient client = applyClient(tServiceBuilder, ( Class<? extends TServiceClient>)field.getType());
+        return getProxyBean(tServiceBuilder, client);
     }
+
+    public <T extends TServiceClient> T applyProxyClient(TServiceBuilder builder, Class<T> clazz) throws NoSuchMethodException, TTransportException, InstantiationException, DolphinFrameException, IllegalAccessException, InvocationTargetException {
+        TServiceClient client = applyClient(builder, clazz);
+        return (T) getProxyBean(builder, client);
+    }
+
 }

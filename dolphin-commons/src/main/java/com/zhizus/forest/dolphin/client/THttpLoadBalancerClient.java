@@ -1,17 +1,18 @@
 package com.zhizus.forest.dolphin.client;
 
 import com.google.common.base.Strings;
-import com.netflix.client.config.CommonClientConfigKey;
-import com.netflix.client.config.IClientConfig;
+import com.google.common.collect.Lists;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.netflix.ribbon.*;
+import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerContext;
+import org.springframework.cloud.netflix.ribbon.RibbonStatsRecorder;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,59 +21,37 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by dempezheng on 2017/8/16.
+ * Created by dempezheng on 2017/8/23.
  */
-public class LoadBalanceDelegateClient {
-
-    private HttpClient client;
+public class THttpLoadBalancerClient {
     private SpringClientFactory clientFactory;
     private String serviceId;
-    private String path;
-    List<String> backupServers;
+    private String listOfBackupServers;
+    THttpLoadBalancerRequest request;
 
-    public LoadBalanceDelegateClient(SpringClientFactory clientFactory, HttpClient client, String serviceId, String path, List<String> backupServers) {
+    public HttpClient getDelegateClient() {
+        return request.getClient();
+    }
+
+    public THttpLoadBalancerClient(SpringClientFactory clientFactory, String serviceId, String listOfBackupServers,
+                                   THttpLoadBalancerRequest request) {
         this.clientFactory = clientFactory;
-        this.client = client;
         this.serviceId = serviceId;
-        this.path = path;
-        this.backupServers = backupServers;
+        this.listOfBackupServers = listOfBackupServers;
+        this.request = request;
     }
 
-    public HttpClient getClient() {
-        return client;
-    }
 
-    public HttpResponse execute(HttpPost post) throws IOException {
-        return execute(serviceId, post);
-    }
-
-    public HttpResponse execute(String serviceId, HttpPost post) throws IOException {
-        ILoadBalancer loadBalancer;
+    public HttpResponse execute(String path, byte[] body) throws IOException {
         if (Strings.isNullOrEmpty(serviceId)) {
-            String url = backupServers.get(0);
-            post.setURI(URI.create(url));
-            return client.execute(post);
+            serviceId = "default";
         }
-        loadBalancer = getLoadBalancer(serviceId);
-        Server server = getServer(loadBalancer);
-        String url = "";
-        if (server != null) {
-            RibbonServer ribbonServer = new RibbonServer(serviceId, server, isSecure(server,
-                    serviceId), serverIntrospector(serviceId).getMetadata(server));
-            url = "http://" + ribbonServer.getHost() + ":" + ribbonServer.getPort() + path;
-        } else if (backupServers.size() > 0) {
-            url = backupServers.get(0);
-        } else {
-            throw new IllegalStateException("No instances available for " + serviceId);
-        }
-        post.setURI(URI.create(url));
-
-        RibbonLoadBalancerContext context = this.clientFactory
-                .getLoadBalancerContext(serviceId);
+        Server server = choose(serviceId);
+        RibbonServer ribbonServer = new RibbonServer(serviceId, server, path);
+        RibbonLoadBalancerContext context = this.clientFactory.getLoadBalancerContext(serviceId);
         RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
-
         try {
-            HttpResponse response = client.execute(post);
+            HttpResponse response = request.apply(ribbonServer, body);
             statsRecorder.recordStats(response);
             return response;
         } catch (IOException ex) {
@@ -85,22 +64,35 @@ public class LoadBalanceDelegateClient {
         return null;
     }
 
-    private ServerIntrospector serverIntrospector(String serviceId) {
-        ServerIntrospector serverIntrospector = this.clientFactory.getInstance(serviceId,
-                ServerIntrospector.class);
-        if (serverIntrospector == null) {
-            serverIntrospector = new DefaultServerIntrospector();
+
+    public Server choose(String serviceId) {
+        ILoadBalancer loadBalancer = getLoadBalancer(serviceId);
+        Server server = getServer(loadBalancer);
+        if (server == null && !Strings.isNullOrEmpty(listOfBackupServers)) {
+            loadBalancer.addServers(backupServerList(listOfBackupServers));
+            server = getServer(loadBalancer);
         }
-        return serverIntrospector;
+        if (server == null) {
+            throw new IllegalStateException("No instances available for " + serviceId);
+        }
+        return server;
     }
 
-    private boolean isSecure(Server server, String serviceId) {
-        IClientConfig config = this.clientFactory.getClientConfig(serviceId);
-        if (config != null) {
-            return config.get(CommonClientConfigKey.IsSecure, false);
-        }
-        return serverIntrospector(serviceId).isSecure(server);
+
+    private List<Server> backupServerList(String backupServers) {
+        return derive(backupServers);
     }
+
+    private List<Server> derive(String value) {
+        List<Server> list = Lists.newArrayList();
+        if (!Strings.isNullOrEmpty(value)) {
+            for (String s : value.split(",")) {
+                list.add(new Server(s.trim()));
+            }
+        }
+        return list;
+    }
+
 
     protected Server getServer(ILoadBalancer loadBalancer) {
         if (loadBalancer == null) {
@@ -113,22 +105,25 @@ public class LoadBalanceDelegateClient {
         return this.clientFactory.getLoadBalancer(serviceId);
     }
 
+
     protected static class RibbonServer implements ServiceInstance {
         private final String serviceId;
         private final Server server;
         private final boolean secure;
+        private final String path;
         private Map<String, String> metadata;
 
-        protected RibbonServer(String serviceId, Server server) {
-            this(serviceId, server, false, Collections.<String, String>emptyMap());
+        protected RibbonServer(String serviceId, Server server, String path) {
+            this(serviceId, server, false, Collections.<String, String>emptyMap(), path);
         }
 
         protected RibbonServer(String serviceId, Server server, boolean secure,
-                               Map<String, String> metadata) {
+                               Map<String, String> metadata, String path) {
             this.serviceId = serviceId;
             this.server = server;
             this.secure = secure;
             this.metadata = metadata;
+            this.path = path;
         }
 
         @Override
@@ -153,7 +148,13 @@ public class LoadBalanceDelegateClient {
 
         @Override
         public URI getUri() {
-            return DefaultServiceInstance.getUri(this);
+            Assert.notNull(server, "instance can not be null");
+            String url = "http://" + server.getHost() + ":" + server.getPort() + path;
+            URI uri = URI.create(url);
+            if (secure) {
+                uri = UriComponentsBuilder.fromUri(uri).scheme("https").build().toUri();
+            }
+            return uri;
         }
 
         @Override
@@ -176,6 +177,5 @@ public class LoadBalanceDelegateClient {
             return sb.toString();
         }
     }
-
 
 }

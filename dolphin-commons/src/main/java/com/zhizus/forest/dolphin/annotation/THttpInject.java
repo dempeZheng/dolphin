@@ -14,7 +14,12 @@ public @interface THttpInject {
 
     String serviceName() default "";
 
-    String[] backupServers() default {};
+    /**
+     * 多个用逗号分隔
+     *
+     * @return
+     */
+    String backupServers() default "";
 
     String path() default "/";
 }

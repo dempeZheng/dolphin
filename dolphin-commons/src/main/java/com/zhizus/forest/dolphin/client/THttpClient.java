@@ -1,9 +1,7 @@
 package com.zhizus.forest.dolphin.client;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.HttpStatus;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
@@ -11,9 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by dempezheng on 2017/8/16.
@@ -23,10 +18,11 @@ public class THttpClient extends TTransport {
     private InputStream inputStream_ = null;
     private int connectTimeout_ = 0;
     private int readTimeout_ = 0;
-    private Map<String, String> customHeaders_ = null;
-    private final LoadBalanceDelegateClient client;
+    private final THttpLoadBalancerClient client;
+    private String path;
 
-    public THttpClient(LoadBalanceDelegateClient client) throws TTransportException {
+    public THttpClient(String path, THttpLoadBalancerClient client) throws TTransportException {
+        this.path = path;
         this.client = client;
 
     }
@@ -34,7 +30,7 @@ public class THttpClient extends TTransport {
     public void setConnectTimeout(int timeout) {
         this.connectTimeout_ = timeout;
         if (null != this.client) {
-            this.client.getClient().getParams().setParameter("http.connection.timeout", Integer.valueOf(this.connectTimeout_));
+            this.client.getDelegateClient().getParams().setParameter("http.connection.timeout", Integer.valueOf(this.connectTimeout_));
         }
 
     }
@@ -42,35 +38,15 @@ public class THttpClient extends TTransport {
     public void setReadTimeout(int timeout) {
         this.readTimeout_ = timeout;
         if (null != this.client) {
-            this.client.getClient().getParams().setParameter("http.socket.timeout", Integer.valueOf(this.readTimeout_));
+            this.client.getDelegateClient().getParams().setParameter("http.socket.timeout", Integer.valueOf(this.readTimeout_));
         }
     }
 
-    public void setCustomHeaders(Map<String, String> headers) {
-        this.customHeaders_ = headers;
-    }
-
-    public void setCustomHeader(String key, String value) {
-        if (this.customHeaders_ == null) {
-            this.customHeaders_ = new HashMap();
-        }
-        this.customHeaders_.put(key, value);
-    }
 
     public void open() {
     }
 
     public void close() {
-        if (null != this.inputStream_) {
-            try {
-                this.inputStream_.close();
-            } catch (IOException var2) {
-                ;
-            }
-
-            this.inputStream_ = null;
-        }
-
     }
 
     public boolean isOpen() {
@@ -98,90 +74,32 @@ public class THttpClient extends TTransport {
         this.requestBuffer_.write(buf, off, len);
     }
 
-    private static void consume(HttpEntity entity) throws IOException {
-        if (entity != null) {
-            if (entity.isStreaming()) {
-                InputStream instream = entity.getContent();
-                if (instream != null) {
-                    instream.close();
-                }
-            }
-
-        }
-    }
-
-    private void flushUsingHttpClient() throws TTransportException {
-        if (null == this.client) {
-            throw new TTransportException("Null HttpClient, aborting.");
-        } else {
-            byte[] data = this.requestBuffer_.toByteArray();
-            this.requestBuffer_.reset();
-            HttpPost post = null;
-            InputStream is = null;
-
-            try {
-                post = new HttpPost();
-                post.setHeader("Content-Type", "application/x-thrift");
-                post.setHeader("Accept", "application/x-thrift");
-                post.setHeader("User-Agent", "Java/THttpClient/HC");
-                if (null != this.customHeaders_) {
-                    Iterator i$ = this.customHeaders_.entrySet().iterator();
-
-                    while (i$.hasNext()) {
-                        Map.Entry<String, String> header = (Map.Entry) i$.next();
-                        post.setHeader((String) header.getKey(), (String) header.getValue());
-                    }
-                }
-
-                post.setEntity(new ByteArrayEntity(data));
-                HttpResponse response = this.client.execute(post);
-                int responseCode = response.getStatusLine().getStatusCode();
-                is = response.getEntity().getContent();
-                if (responseCode != 200) {
-                    throw new TTransportException("HTTP Response code: " + responseCode);
-                } else {
-                    byte[] buf = new byte[1024];
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    boolean var8 = false;
-
-                    int len;
-                    do {
-                        len = is.read(buf);
-                        if (len > 0) {
-                            baos.write(buf, 0, len);
-                        }
-                    } while (-1 != len);
-
-                    try {
-                        consume(response.getEntity());
-                    } catch (IOException var18) {
-                        ;
-                    }
-
-                    this.inputStream_ = new ByteArrayInputStream(baos.toByteArray());
-                }
-            } catch (IOException var19) {
-                if (null != post) {
-                    post.abort();
-                }
-
-                throw new TTransportException(var19);
-            } finally {
-                if (null != is) {
-                    try {
-                        is.close();
-                    } catch (IOException var17) {
-                        throw new TTransportException(var17);
-                    }
-                }
-
-            }
-        }
-    }
-
-
     public void flush() throws TTransportException {
-        this.flushUsingHttpClient();
+        byte[] data = this.requestBuffer_.toByteArray();
+        this.requestBuffer_.reset();
+
+        try {
+            HttpResponse response = this.client.execute(path, data);
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode != HttpStatus.SC_OK) {
+                throw new TTransportException("HTTP Response code: " + responseCode);
+            }
+            InputStream is = response.getEntity().getContent();
+            byte[] buf = new byte[1024];
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int len = 0;
+            do {
+                len = is.read(buf);
+                if (len > 0) {
+                    baos.write(buf, 0, len);
+                }
+            } while (-1 != len);
+
+            inputStream_ = new ByteArrayInputStream(baos.toByteArray());
+        } catch (IOException var19) {
+            throw new TTransportException(var19);
+        }
 
     }
 
