@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.netflix.ribbon.eureka.RibbonEurekaAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -30,6 +31,8 @@ public class ClientApplication implements CommandLineRunner {
     @THttpInject(path = "/sample", serviceName = "dolphin-server2")
     Sample.Client tHttpClient;
 
+
+
     @Autowired
     SpringClientFactory factory;
 
@@ -40,13 +43,14 @@ public class ClientApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+//        helloByAnnotation();
+//        hello();
         helloByProxyClient();
 
     }
 
     public void helloByAnnotation() throws Exception {
         System.out.println(tHttpClient.hello("test"));
-
     }
 
     /**
@@ -68,9 +72,9 @@ public class ClientApplication implements CommandLineRunner {
             InstantiationException, IllegalAccessException, DolphinFrameException {
         TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(factory);
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
-                .withBackupOfServerList("localhost:9090")
+//                .withBackupOfServerList("localhost:9090")
                 .withPath("/sample")
-                .withServiceId("sample");
+                .withServiceId("dolphin-server2");
         Sample.Client client = tServiceClientFactory.applyProxyClient(builder, Sample.Client.class);
         String sayHello = client.hello("sayHello");
         System.out.println(sayHello);

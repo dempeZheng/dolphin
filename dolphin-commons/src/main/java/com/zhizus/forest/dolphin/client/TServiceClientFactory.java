@@ -2,14 +2,12 @@ package com.zhizus.forest.dolphin.client;
 
 import com.netflix.http4.NFHttpClient;
 import com.netflix.http4.NFHttpClientFactory;
-import com.zhizus.forest.dolphin.annotation.THttpInject;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -21,13 +19,6 @@ public class TServiceClientFactory {
 
     public TServiceClientFactory(SpringClientFactory factory) {
         this.factory = factory;
-    }
-
-    public TServiceClient newClient(Field field, THttpInject annotation) throws TTransportException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        TServiceBuilder tServiceBuilder = new TServiceBuilder().withPath(annotation.path())
-                .withServiceId(annotation.serviceName())
-                .withBackupOfServerList(annotation.backupServers());
-        return applyClient(tServiceBuilder, (Class<? extends TServiceClient>) field.getType());
     }
 
     public <T extends TServiceClient> T applyClient(TServiceBuilder builder, Class<T> clazz) throws TTransportException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
