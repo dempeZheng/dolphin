@@ -77,3 +77,4 @@ public class SampleController implements Sample.Iface {
 
 ## todo
 - 支持spring xml配置
+- 支持不使用eureka的情况
