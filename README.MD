@@ -3,7 +3,6 @@
 
 ## future
 - 支持thrift序列化的http协议
-- 支持ribbon的ThriftTemplate
 - 支持eureka的服务注册发现
 - 基于spring boot
 
@@ -77,9 +76,4 @@ public class SampleController implements Sample.Iface {
 注入的client实际上是个代理类，真正的处理类已经通过threadlocal解决thrift client多线程的问题
 
 ## todo
-- 支持eureka的各种重试
-- 改造支持interceptor模式，支持负载均衡的client和非负载均衡的client
-- 支持fegin
-- 优化配置
-- RxJava封装异步Thrift Client
 - 支持spring xml配置
