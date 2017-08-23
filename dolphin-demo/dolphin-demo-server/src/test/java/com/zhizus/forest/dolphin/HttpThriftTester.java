@@ -41,7 +41,7 @@ public class HttpThriftTester {
         System.out.println(hello);
     }
 
-    public void testRest(){
+    public void testRest() {
 //        restTemplate.postForEntity("http://localhost:9090/sample", null);
     }
 

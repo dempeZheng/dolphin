@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.netflix.ribbon.eureka.RibbonEurekaAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -30,7 +29,6 @@ public class ClientApplication implements CommandLineRunner {
 
     @THttpInject(path = "/sample", serviceName = "dolphin-server2")
     Sample.Client tHttpClient;
-
 
 
     @Autowired

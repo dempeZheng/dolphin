@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
 import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
-import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -24,7 +22,6 @@ import org.springframework.util.ReflectionUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by dempezheng on 2017/8/16.
@@ -61,8 +58,7 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
         return pvs;
     }
 
-    private void processFields(Object bean, Field field) throws TTransportException, IllegalAccessException,
-            InvocationTargetException, InstantiationException, NoSuchMethodException, DolphinFrameException {
+    private void processFields(Object bean, Field field) throws Exception {
         THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
         if (annotation == null) {
             return;

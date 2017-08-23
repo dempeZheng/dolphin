@@ -2,17 +2,14 @@ package com.zhizus.forest.dolphin.client;
 
 import com.google.common.collect.Maps;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
-import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import com.zhizus.forest.dolphin.utils.ThriftClientUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.transport.TTransportException;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +26,7 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
     }
 
 
-    private Object getClient(TServiceBuilder builder, TServiceClient object) throws NoSuchMethodException, TTransportException, DolphinFrameException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private Object getClient(TServiceBuilder builder, TServiceClient object) throws Exception {
         Map<Object, Object> map = thriftClientThreadLocal.get();
         if (map == null) {
             map = Maps.newHashMap();
@@ -64,15 +61,15 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
         return proxyFactory.getObject();
     }
 
-    public Object applyProxyClient(Field field, THttpInject annotation) throws NoSuchMethodException, TTransportException, InstantiationException, DolphinFrameException, IllegalAccessException, InvocationTargetException {
+    public Object applyProxyClient(Field field, THttpInject annotation) throws Exception {
         TServiceBuilder tServiceBuilder = new TServiceBuilder().withPath(annotation.path())
                 .withServiceId(annotation.serviceName())
                 .withBackupOfServerList(annotation.backupServers());
-        TServiceClient client = applyClient(tServiceBuilder, ( Class<? extends TServiceClient>)field.getType());
+        TServiceClient client = applyClient(tServiceBuilder, (Class<? extends TServiceClient>) field.getType());
         return getProxyBean(tServiceBuilder, client);
     }
 
-    public <T extends TServiceClient> T applyProxyClient(TServiceBuilder builder, Class<T> clazz) throws NoSuchMethodException, TTransportException, InstantiationException, DolphinFrameException, IllegalAccessException, InvocationTargetException {
+    public <T extends TServiceClient> T applyProxyClient(TServiceBuilder builder, Class<T> clazz) throws Exception {
         TServiceClient client = applyClient(builder, clazz);
         return (T) getProxyBean(builder, client);
     }
