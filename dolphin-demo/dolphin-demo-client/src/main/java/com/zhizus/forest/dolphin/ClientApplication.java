@@ -66,8 +66,7 @@ public class ClientApplication implements CommandLineRunner {
     }
 
 
-    public void helloByProxyClient() throws InvocationTargetException, NoSuchMethodException, TException,
-            InstantiationException, IllegalAccessException, DolphinFrameException {
+    public void helloByProxyClient() throws Exception {
         TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(factory);
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
 //                .withBackupOfServerList("localhost:9090")
