@@ -1,9 +1,9 @@
 package com.zhizus.forest.dolphin.client;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,32 +16,13 @@ import java.io.InputStream;
 public class THttpClient extends TTransport {
     private final ByteArrayOutputStream requestBuffer_ = new ByteArrayOutputStream();
     private InputStream inputStream_ = null;
-    private int connectTimeout_ = 0;
-    private int readTimeout_ = 0;
     private final THttpLoadBalancerClient client;
     private String path;
 
     public THttpClient(String path, THttpLoadBalancerClient client) throws TTransportException {
         this.path = path;
         this.client = client;
-
     }
-
-    public void setConnectTimeout(int timeout) {
-        this.connectTimeout_ = timeout;
-        if (null != this.client) {
-            this.client.getDelegateClient().getParams().setParameter("http.connection.timeout", Integer.valueOf(this.connectTimeout_));
-        }
-
-    }
-
-    public void setReadTimeout(int timeout) {
-        this.readTimeout_ = timeout;
-        if (null != this.client) {
-            this.client.getDelegateClient().getParams().setParameter("http.socket.timeout", Integer.valueOf(this.readTimeout_));
-        }
-    }
-
 
     public void open() {
     }
@@ -79,12 +60,12 @@ public class THttpClient extends TTransport {
         this.requestBuffer_.reset();
 
         try {
-            HttpResponse response = this.client.execute(path, data);
-            int responseCode = response.getStatusLine().getStatusCode();
+            ClientHttpResponse response = this.client.execute(path, data);
+            int responseCode = response.getStatusCode().value();
             if (responseCode != HttpStatus.SC_OK) {
                 throw new TTransportException("HTTP Response code: " + responseCode);
             }
-            InputStream is = response.getEntity().getContent();
+            InputStream is = response.getBody();
             byte[] buf = new byte[1024];
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

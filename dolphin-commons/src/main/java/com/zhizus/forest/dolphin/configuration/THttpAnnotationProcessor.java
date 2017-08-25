@@ -3,6 +3,7 @@ package com.zhizus.forest.dolphin.configuration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.client.THttpDelegate;
 import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
 import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
@@ -12,9 +13,12 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -26,10 +30,11 @@ import java.lang.reflect.Field;
 /**
  * Created by dempezheng on 2017/8/16.
  */
-public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcessorAdapter implements BeanFactoryAware, PriorityOrdered {
+public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcessorAdapter implements ApplicationContextAware, BeanFactoryAware, PriorityOrdered {
     private final static Logger logger = LoggerFactory.getLogger(THttpAnnotationProcessor.class);
 
     private ConfigurableListableBeanFactory beanFactory;
+    private ApplicationContext applicationContext;
 
     @Override
     public PropertyValues postProcessPropertyValues(
@@ -75,7 +80,13 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
             tHttpClient = beanFactory.getBean(beanName);
         } else {
             SpringClientFactory springClientFactory = beanFactory.getBean(SpringClientFactory.class);
-            TServiceProxyClientFactory factory = new TServiceProxyClientFactory(springClientFactory);
+            THttpDelegate delegate = null;
+            if (BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, THttpDelegate.class).length > 0) {
+                delegate = beanFactory.getBean(THttpDelegate.class);
+            } else {
+                delegate = new THttpDelegate();
+            }
+            TServiceProxyClientFactory factory = new TServiceProxyClientFactory(springClientFactory, delegate);
             tHttpClient = factory.applyProxyClient(field, annotation);
             beanFactory.registerSingleton(beanName, tHttpClient);
         }
@@ -103,5 +114,9 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
     }
 
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
 

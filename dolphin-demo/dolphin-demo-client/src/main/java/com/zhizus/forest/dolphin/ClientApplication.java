@@ -2,9 +2,9 @@ package com.zhizus.forest.dolphin;
 
 import com.zhizus.forest.dolphin.annotation.EnableTHttpInject;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.client.THttpDelegate;
 import com.zhizus.forest.dolphin.client.TServiceClientFactory;
 import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
-import com.zhizus.forest.dolphin.exception.DolphinFrameException;
 import com.zhizus.forest.dolphin.gen.Sample;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class ClientApplication implements CommandLineRunner {
      *
      */
     public void hello() throws InvocationTargetException, NoSuchMethodException, TException, InstantiationException, IllegalAccessException {
-        TServiceClientFactory tServiceClientFactory = new TServiceClientFactory(factory);
+        TServiceClientFactory tServiceClientFactory = new TServiceClientFactory(factory, new THttpDelegate());
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
                 .withBackupOfServerList("localhost:9090")
                 .withPath("/sample")
@@ -67,7 +67,7 @@ public class ClientApplication implements CommandLineRunner {
 
 
     public void helloByProxyClient() throws Exception {
-        TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(factory);
+        TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(factory, new THttpDelegate());
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
 //                .withBackupOfServerList("localhost:9090")
                 .withPath("/sample")

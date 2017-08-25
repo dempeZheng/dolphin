@@ -4,12 +4,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerContext;
 import org.springframework.cloud.netflix.ribbon.RibbonStatsRecorder;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,22 +26,18 @@ public class THttpLoadBalancerClient {
     private SpringClientFactory clientFactory;
     private String serviceId;
     private String listOfBackupServers;
-    THttpLoadBalancerRequest request;
-
-    public HttpClient getDelegateClient() {
-        return request.getClient();
-    }
+    THttpDelegate tHttpDelegate;
 
     public THttpLoadBalancerClient(SpringClientFactory clientFactory, String serviceId, String listOfBackupServers,
-                                   THttpLoadBalancerRequest request) {
+                                   THttpDelegate tHttpDelegate) {
         this.clientFactory = clientFactory;
         this.serviceId = serviceId;
         this.listOfBackupServers = listOfBackupServers;
-        this.request = request;
+        this.tHttpDelegate = tHttpDelegate;
     }
 
 
-    public HttpResponse execute(String path, byte[] body) throws IOException {
+    public ClientHttpResponse execute(String path, byte[] body) throws IOException {
         if (Strings.isNullOrEmpty(serviceId)) {
             serviceId = "default";
         }
@@ -51,7 +46,7 @@ public class THttpLoadBalancerClient {
         RibbonLoadBalancerContext context = this.clientFactory.getLoadBalancerContext(serviceId);
         RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
         try {
-            HttpResponse response = request.apply(ribbonServer, body);
+            ClientHttpResponse response = tHttpDelegate.execute(ribbonServer.getUri(), body);
             statsRecorder.recordStats(response);
             return response;
         } catch (IOException ex) {

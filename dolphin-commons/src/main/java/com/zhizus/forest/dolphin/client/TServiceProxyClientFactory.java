@@ -21,10 +21,9 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
 
     private static ThreadLocal<Map<Object, Object>> thriftClientThreadLocal = new ThreadLocal<Map<Object, Object>>();
 
-    public TServiceProxyClientFactory(SpringClientFactory factory) {
-        super(factory);
+    public TServiceProxyClientFactory(SpringClientFactory factory, THttpDelegate defaultClient) {
+        super(factory, defaultClient);
     }
-
 
     private Object getClient(TServiceBuilder builder, TServiceClient object) throws Exception {
         Map<Object, Object> map = thriftClientThreadLocal.get();
