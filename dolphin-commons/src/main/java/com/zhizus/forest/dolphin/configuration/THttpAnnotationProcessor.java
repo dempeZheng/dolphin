@@ -2,9 +2,10 @@ package com.zhizus.forest.dolphin.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
-import com.zhizus.forest.dolphin.client.THttpDelegate;
 import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
+import com.zhizus.forest.dolphin.ribbon.THttpTemplate;
 import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,10 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
+import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -80,13 +82,9 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
             tHttpClient = beanFactory.getBean(beanName);
         } else {
             SpringClientFactory springClientFactory = beanFactory.getBean(SpringClientFactory.class);
-            THttpDelegate delegate = null;
-            if (BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, THttpDelegate.class).length > 0) {
-                delegate = beanFactory.getBean(THttpDelegate.class);
-            } else {
-                delegate = new THttpDelegate();
-            }
-            TServiceProxyClientFactory factory = new TServiceProxyClientFactory(springClientFactory, delegate);
+            THttpTemplate httpTemplate = new THttpTemplate();
+            httpTemplate.setInterceptors(Lists.newArrayList(new LoadBalancerInterceptor(new RibbonLoadBalancerClient(springClientFactory))));
+            TServiceProxyClientFactory factory = new TServiceProxyClientFactory(httpTemplate);
             tHttpClient = factory.applyProxyClient(field, annotation);
             beanFactory.registerSingleton(beanName, tHttpClient);
         }

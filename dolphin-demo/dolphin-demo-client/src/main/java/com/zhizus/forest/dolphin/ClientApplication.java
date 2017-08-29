@@ -1,17 +1,20 @@
 package com.zhizus.forest.dolphin;
 
+import com.google.common.collect.Lists;
 import com.zhizus.forest.dolphin.annotation.EnableTHttpInject;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
-import com.zhizus.forest.dolphin.client.THttpDelegate;
 import com.zhizus.forest.dolphin.client.TServiceClientFactory;
 import com.zhizus.forest.dolphin.client.TServiceProxyClientFactory;
 import com.zhizus.forest.dolphin.gen.Sample;
+import com.zhizus.forest.dolphin.ribbon.THttpTemplate;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
+import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.netflix.ribbon.eureka.RibbonEurekaAutoConfiguration;
 
@@ -55,7 +58,9 @@ public class ClientApplication implements CommandLineRunner {
      *
      */
     public void hello() throws InvocationTargetException, NoSuchMethodException, TException, InstantiationException, IllegalAccessException {
-        TServiceClientFactory tServiceClientFactory = new TServiceClientFactory(factory, new THttpDelegate());
+        THttpTemplate httpTemplate = new THttpTemplate();
+        httpTemplate.setInterceptors(Lists.newArrayList(new LoadBalancerInterceptor(new RibbonLoadBalancerClient(factory))));
+        TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(httpTemplate);
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
                 .withBackupOfServerList("localhost:9090")
                 .withPath("/sample")
@@ -67,7 +72,9 @@ public class ClientApplication implements CommandLineRunner {
 
 
     public void helloByProxyClient() throws Exception {
-        TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(factory, new THttpDelegate());
+        THttpTemplate httpTemplate = new THttpTemplate();
+        httpTemplate.setInterceptors(Lists.newArrayList(new LoadBalancerInterceptor(new RibbonLoadBalancerClient(factory))));
+        TServiceProxyClientFactory tServiceClientFactory = new TServiceProxyClientFactory(httpTemplate);
         TServiceClientFactory.TServiceBuilder builder = new TServiceClientFactory.TServiceBuilder()
 //                .withBackupOfServerList("localhost:9090")
                 .withPath("/sample")

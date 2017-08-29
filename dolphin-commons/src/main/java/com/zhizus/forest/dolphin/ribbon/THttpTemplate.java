@@ -1,4 +1,4 @@
-package com.zhizus.forest.dolphin.client;
+package com.zhizus.forest.dolphin.ribbon;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,7 +16,7 @@ import java.net.URI;
 /**
  * Created by dempezheng on 2017/8/25.
  */
-public class THttpDelegate extends InterceptingHttpAccessor {
+public class THttpTemplate extends InterceptingHttpAccessor {
 
     private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
 
@@ -31,15 +31,11 @@ public class THttpDelegate extends InterceptingHttpAccessor {
             headers.add("User-Agent", "Java/THttpClient/HC");
             request.getBody().write(body);
             response = request.execute();
-            handleResponse(url, HttpMethod.POST, response);
+          //  handleResponse(url, HttpMethod.POST, response);
             return response;
         } catch (IOException ex) {
             throw new ResourceAccessException("I/O error on " + HttpMethod.POST.name() +
                     " request for \"" + url + "\": " + ex.getMessage(), ex);
-        } finally {
-            if (response != null) {
-                response.close();
-            }
         }
     }
 

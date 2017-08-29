@@ -2,12 +2,12 @@ package com.zhizus.forest.dolphin.client;
 
 import com.google.common.collect.Maps;
 import com.zhizus.forest.dolphin.annotation.THttpInject;
+import com.zhizus.forest.dolphin.ribbon.THttpTemplate;
 import com.zhizus.forest.dolphin.utils.ThriftClientUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.thrift.TServiceClient;
 import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -21,9 +21,10 @@ public class TServiceProxyClientFactory extends TServiceClientFactory {
 
     private static ThreadLocal<Map<Object, Object>> thriftClientThreadLocal = new ThreadLocal<Map<Object, Object>>();
 
-    public TServiceProxyClientFactory(SpringClientFactory factory, THttpDelegate defaultClient) {
-        super(factory, defaultClient);
+    public TServiceProxyClientFactory(THttpTemplate tHttpTemplate) {
+        super(tHttpTemplate);
     }
+
 
     private Object getClient(TServiceBuilder builder, TServiceClient object) throws Exception {
         Map<Object, Object> map = thriftClientThreadLocal.get();

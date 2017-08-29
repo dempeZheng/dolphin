@@ -1,4 +1,4 @@
-package com.zhizus.forest.dolphin.client;
+package com.zhizus.forest.dolphin.ribbon;
 
 import org.apache.http.HttpStatus;
 import org.apache.thrift.transport.TTransport;
@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 /**
  * Created by dempezheng on 2017/8/16.
@@ -16,12 +17,14 @@ import java.io.InputStream;
 public class THttpClient extends TTransport {
     private final ByteArrayOutputStream requestBuffer_ = new ByteArrayOutputStream();
     private InputStream inputStream_ = null;
-    private final THttpLoadBalancerClient client;
+    private final THttpTemplate httpTemplate;
+    private String serviceId;
     private String path;
 
-    public THttpClient(String path, THttpLoadBalancerClient client) throws TTransportException {
+    public THttpClient(THttpTemplate httpTemplate, String serviceId, String path) {
+        this.httpTemplate = httpTemplate;
+        this.serviceId = serviceId;
         this.path = path;
-        this.client = client;
     }
 
     public void open() {
@@ -58,14 +61,14 @@ public class THttpClient extends TTransport {
     public void flush() throws TTransportException {
         byte[] data = this.requestBuffer_.toByteArray();
         this.requestBuffer_.reset();
-
+        InputStream is = null;
         try {
-            ClientHttpResponse response = this.client.execute(path, data);
+            ClientHttpResponse response = this.httpTemplate.execute(URI.create("http://" + serviceId + path), data);
             int responseCode = response.getStatusCode().value();
             if (responseCode != HttpStatus.SC_OK) {
                 throw new TTransportException("HTTP Response code: " + responseCode);
             }
-            InputStream is = response.getBody();
+            is = response.getBody();
             byte[] buf = new byte[1024];
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -80,6 +83,14 @@ public class THttpClient extends TTransport {
             inputStream_ = new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException var19) {
             throw new TTransportException(var19);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    throw new TTransportException(e);
+                }
+            }
         }
 
     }

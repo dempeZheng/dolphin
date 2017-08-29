@@ -1,9 +1,10 @@
 package com.zhizus.forest.dolphin.client;
 
+import com.zhizus.forest.dolphin.ribbon.THttpClient;
+import com.zhizus.forest.dolphin.ribbon.THttpTemplate;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TTransportException;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,12 +14,10 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class TServiceClientFactory {
 
-    private SpringClientFactory factory;
-    private THttpDelegate defaultClient;
+    private  THttpTemplate tHttpTemplate;
 
-    public TServiceClientFactory(SpringClientFactory factory, THttpDelegate defaultClient) {
-        this.factory = factory;
-        this.defaultClient = defaultClient;
+    public TServiceClientFactory( THttpTemplate tHttpTemplate) {
+        this.tHttpTemplate = tHttpTemplate;
     }
 
     public <T extends TServiceClient> T applyClient(TServiceBuilder builder, Class<T> clazz) throws TTransportException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -33,8 +32,7 @@ public class TServiceClientFactory {
         String path = builder.getPath();
         String backupServers = builder.getBackupOfServerList();
         String serviceId = builder.getServiceId();
-        THttpLoadBalancerClient loadBalancerClient = new THttpLoadBalancerClient(factory, serviceId, backupServers, defaultClient);
-        THttpClient trans = new THttpClient(path, loadBalancerClient);
+        THttpClient trans = new THttpClient(tHttpTemplate, serviceId, path);
         return new TBinaryProtocol(trans);
     }
 
