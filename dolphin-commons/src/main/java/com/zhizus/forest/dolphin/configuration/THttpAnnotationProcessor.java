@@ -47,10 +47,6 @@ public class THttpAnnotationProcessor extends InstantiationAwareBeanPostProcesso
             ReflectionUtils.doWithLocalFields(targetClass, new ReflectionUtils.FieldCallback() {
                 @Override
                 public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                    THttpInject annotation = AnnotationUtils.getAnnotation(field, THttpInject.class);
-                    if (annotation != null) {
-                        System.out.println(field);
-                    }
                     try {
                         processFields(bean, field);
                     } catch (Exception e) {

@@ -3,8 +3,8 @@
 
 ## future
 - 支持thrift序列化的http协议
-- 支持eureka的服务注册发现
-- 基于spring boot
+- 兼容spring cloud ribbon 配置
+- 支持基于ribbon负载均衡的retryRetryLoadBalancerInterceptor
 
 
 ## quick start
