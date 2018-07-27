@@ -1,7 +1,7 @@
 # dolphin
 >基于spring boot支持thrift序列化的http的微服务框架
 
-## future
+## Feature
 - 支持thrift序列化的http协议
 - 兼容spring cloud ribbon 配置
 - 支持基于ribbon负载均衡的retryRetryLoadBalancerInterceptor
